@@ -19,9 +19,13 @@
   - [x] dna/rna nucleotide triplets
   - [x] dna/rna bp and anticodon handling
   - [ ] dynamic dna/rna editing (`seq` module)
-    - [ ] push/pop nucleobases
+    - [x] always keep nucleobase sequence
+    - [x] nucleotide triplet iterator
+    - [x] push/pop nucleobases
     - [ ] insert/remove nucleobases
     - [ ] substitute nucleobases
+    - [ ] anticodon sequence iterator
+    - [ ] base-pair sequence iterator
   - [ ] dna transcription
   - [ ] rna reverse transcription
   - [ ] rna polypeptide translation
@@ -29,7 +33,7 @@
     - [x] `ACGT` (see `DnaNucleoBase`)
     - [x] `ACGU` (see `RnaNucleoBase`)
     - [ ] `ACGTUN` (not sure if needed?)
-    - [ ] `ACGTUWSMKRYBDHVN`-` (IUPAC)
+    - [ ] `ACGTUWSMKRYBDHVN*-` (IUPAC)
 - genetic sequence analysis
   - [ ] gc<sup>n</sup> content
   - [ ] at/gc content
