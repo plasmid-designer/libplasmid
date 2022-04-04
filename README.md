@@ -24,12 +24,13 @@
     - [x] push/pop nucleobases
     - [ ] insert/remove nucleobases
     - [ ] substitute nucleobases
-    - [ ] anticodon sequence iterator
-    - [ ] base-pair sequence iterator
+    - [ ] base-pair iterator
+    - [ ] anticodon iterator
+    - [ ] polypeptide iterator (lazy translation)
   - [ ] dna transcription
   - [ ] rna reverse transcription
-  - [ ] rna polypeptide translation
-  - [ ] advanced dna alphabets
+  - [x] rna polypeptide translation
+  - [ ] genetic codes
     - [x] `ACGT` (see `DnaNucleoBase`)
     - [x] `ACGU` (see `RnaNucleoBase`)
     - [ ] `ACGTUN` (not sure if needed?)
