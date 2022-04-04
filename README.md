@@ -12,23 +12,31 @@ Scope:
 
 ## Modules
 
-### dna
-> DNA Tools
+| Module   | Description |
+| -------- | ----------- |
+| `dna`    | DNA Processing |
+| `rna`    | RNA Processing |
+| `eaa`    | Essential Amino Acid Processing |
+| `seq`    | Genetic Sequence Editing and Analysis |
+| `vis`    | Visualization Tools |
+| `traits` | Helpful Traits |
 
-### rna
-> RNA Tools
+### Examples
 
-Load RNA from String:
+Load DNA from string:
 ```rs
-let seq = "AUGGUUCGGCAAUUU";
-if let Some(seq) = RnaSequence.from_str(seq) {
+let dna = "ATGGTTCGGCAATTT";
+if let Some(seq) = DnaSequence.from_str(dna) {
     // Print sequence
     println!("{}", seq);
 }
 ```
 
-### eaa
-> Essential Amino Acid Tools
-
-### vis
-> Visualization Tools
+Load RNA from string:
+```rs
+let rna = "AUGGUUCGGCAAUUU";
+if let Some(seq) = RnaSequence.from_str(rna) {
+    // Print sequence
+    println!("{}", seq);
+}
+```
