@@ -40,16 +40,18 @@ impl RnaPartialCodon {
     }
 
     pub fn to_codon(&self) -> Option<RnaCodon> {
-        let fst = self.bases.get(0)?;
-        let snd = self.bases.get(1)?;
-        let trd = self.bases.get(2)?;
-        Some(RnaCodon(*fst, *snd, *trd))
+        let arr = [
+            *self.bases.get(0)?,
+            *self.bases.get(1)?,
+            *self.bases.get(2)?,
+        ];
+        Some(arr.into())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{RnaCodon, RnaPartialCodon};
+    use super::RnaPartialCodon;
 
     #[test]
     fn test_rna_partial_codon_new() {
@@ -71,7 +73,7 @@ mod tests {
         let codon = pcodon.to_codon();
         assert!(codon.is_some());
         if let Some(codon) = codon {
-            assert_eq!(codon, RnaCodon(A, U, G));
+            assert_eq!(codon, [A, U, G].into());
         }
     }
 }

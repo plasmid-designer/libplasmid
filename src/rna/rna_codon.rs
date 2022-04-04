@@ -3,43 +3,12 @@ use crate::traits::*;
 use super::RnaNucleoBase;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct RnaCodon(pub RnaNucleoBase, pub RnaNucleoBase, pub RnaNucleoBase);
-
-impl Codon<RnaNucleoBase> for RnaCodon {
-    fn from_triplet(triplet: (RnaNucleoBase, RnaNucleoBase, RnaNucleoBase)) -> RnaCodon {
-        RnaCodon(triplet.0, triplet.1, triplet.2)
-    }
-
-    fn anticodon(&self) -> RnaCodon {
-        todo!()
-    }
+pub struct RnaCodon {
+    triplet: [RnaNucleoBase; 3],
 }
 
-impl<T> TryFromStr<'_, T> for RnaCodon
-where
-    T: AsRef<str>,
-{
-    fn try_from_str(value: T) -> Option<Self> {
-        let chars = value.as_ref().chars().collect::<Vec<_>>();
-        if chars.len() != 3 {
-            return None;
-        }
-        let mut nucleobase_codes: Vec<RnaNucleoBase> = Vec::with_capacity(3);
-        for char in chars {
-            nucleobase_codes.push(RnaNucleoBase::try_from_letter(char)?)
-        }
-        let mut iter = nucleobase_codes.into_iter();
-        Some(RnaCodon(iter.next()?, iter.next()?, iter.next()?))
-    }
-}
+impl_codon_traits!(RnaNucleoBase => RnaCodon);
 
-impl ToString for RnaCodon {
-    fn to_string(&self) -> String {
-        [self.0.to_letter(), self.1.to_letter(), self.2.to_letter()]
-            .iter()
-            .collect::<String>()
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::RnaCodon;
@@ -51,22 +20,29 @@ mod tests {
         let result = RnaCodon::try_from_str("AUG");
         assert!(result.is_some());
         if let Some(codon) = result {
-            assert_eq!(codon, RnaCodon(A, U, G));
+            assert_eq!(codon, RnaCodon::from_triplet_arr([A, U, G]));
         }
     }
 
     #[test]
-    fn test_rna_codon_from_string_containing_psi() {
+    fn test_rna_codon_from_string_psi() {
         let result = RnaCodon::try_from_str("AΨG");
         assert!(result.is_some());
         if let Some(codon) = result {
-            assert_eq!(codon, RnaCodon(A, U, G));
+            assert_eq!(codon, [A, U, G].into());
         }
     }
 
     #[test]
     fn test_rna_codon_to_string() {
-        let codon = RnaCodon(A, U, G);
+        let codon: RnaCodon = [A, U, G].into();
         assert_eq!(codon.to_string(), "AUG");
+    }
+
+    #[test]
+    fn test_dna_codon_anticodon() {
+        let codon: RnaCodon = [A, U, G].into();
+        let anticodon = codon.anticodon();
+        assert_eq!(anticodon, [U, A, C].into());
     }
 }

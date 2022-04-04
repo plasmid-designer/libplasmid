@@ -140,31 +140,31 @@ impl From<&RnaCodon> for Eaa {
     fn from(rna: &RnaCodon) -> Self {
         use crate::eaa::Eaa::*;
         use crate::rna::RnaNucleoBase::*;
-        match (rna.0, rna.1, rna.2) {
-            (U, U, U) | (U, U, C) => Phe,
-            (U, U, A) | (U, U, G) | (C, U, U) | (C, U, C) | (C, U, A) | (C, U, G) => Leu,
-            (A, U, U) | (A, U, C) | (A, U, A) => Ile,
-            (A, U, G) => Met,
-            (G, U, U) | (G, U, C) | (G, U, A) | (G, U, G) => Val,
-            (U, C, U) | (U, C, C) | (U, C, A) | (U, C, G) | (A, G, U) | (A, G, C) => Ser,
-            (C, C, U) | (C, C, C) | (C, C, A) | (C, C, G) => Pro,
-            (A, C, U) | (A, C, C) | (A, C, A) | (A, C, G) => Thr,
-            (G, C, U) | (G, C, C) | (G, C, A) | (G, C, G) => Ala,
-            (U, A, U) | (U, A, C) => Tyr,
-            (U, A, A) => Ter, // Stop Ochre
-            (U, A, G) => Ter, // Stop Amber
-            (C, A, U) | (C, A, C) => His,
-            (C, A, A) | (C, A, G) => Gln,
-            (A, A, U) | (A, A, C) => Asn,
-            (A, A, A) | (A, A, G) => Lys,
-            (G, A, U) | (G, A, C) => Asp,
-            (G, A, A) | (G, A, G) => Glu,
-            (U, G, U) | (U, G, C) => Cys,
-            (U, G, A) => Ter, // Stop Opal
-            (U, G, G) => Trp,
-            (C, G, U) | (C, G, C) | (C, G, A) | (C, G, G) => Arg,
-            (A, G, A) | (A, G, G) => Arg,
-            (G, G, U) | (G, G, C) | (G, G, A) | (G, G, G) => Gly,
+        match rna.to_triplet_arr() {
+            [U, U, U] | [U, U, C] => Phe,
+            [U, U, A] | [U, U, G] | [C, U, U] | [C, U, C] | [C, U, A] | [C, U, G] => Leu,
+            [A, U, U] | [A, U, C] | [A, U, A] => Ile,
+            [A, U, G] => Met,
+            [G, U, U] | [G, U, C] | [G, U, A] | [G, U, G] => Val,
+            [U, C, U] | [U, C, C] | [U, C, A] | [U, C, G] | [A, G, U] | [A, G, C] => Ser,
+            [C, C, U] | [C, C, C] | [C, C, A] | [C, C, G] => Pro,
+            [A, C, U] | [A, C, C] | [A, C, A] | [A, C, G] => Thr,
+            [G, C, U] | [G, C, C] | [G, C, A] | [G, C, G] => Ala,
+            [U, A, U] | [U, A, C] => Tyr,
+            [U, A, A] => Ter, // Stop Ochre
+            [U, A, G] => Ter, // Stop Amber
+            [C, A, U] | [C, A, C] => His,
+            [C, A, A] | [C, A, G] => Gln,
+            [A, A, U] | [A, A, C] => Asn,
+            [A, A, A] | [A, A, G] => Lys,
+            [G, A, U] | [G, A, C] => Asp,
+            [G, A, A] | [G, A, G] => Glu,
+            [U, G, U] | [U, G, C] => Cys,
+            [U, G, A] => Ter, // Stop Opal
+            [U, G, G] => Trp,
+            [C, G, U] | [C, G, C] | [C, G, A] | [C, G, G] => Arg,
+            [A, G, A] | [A, G, G] => Arg,
+            [G, G, U] | [G, G, C] | [G, G, A] | [G, G, G] => Gly,
         }
     }
 }

@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod codon;
 pub mod nucleobase;
 

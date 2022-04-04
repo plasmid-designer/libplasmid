@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod traits;
 #[macro_use]
 pub mod dna;

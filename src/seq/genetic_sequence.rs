@@ -56,7 +56,7 @@ where
     pub fn codons(&self) -> impl Iterator<Item = C> + '_ {
         self.sequence
             .chunks_exact(3)
-            .map(|chunk| C::from_triplet((chunk[0], chunk[1], chunk[2])))
+            .map(|chunk| C::from_triplet_arr(chunk.try_into().unwrap()))
     }
 
     pub fn as_codons(&self) -> Vec<C> {
@@ -80,7 +80,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::rna::RnaCodon;
     use crate::seq::RnaSequence;
 
     #[test]
@@ -94,14 +93,14 @@ mod tests {
         assert_eq!(
             codons,
             &[
-                RnaCodon(A, U, G), // Met
-                RnaCodon(U, G, A), // Ter
-                RnaCodon(U, G, A), // Ter
-                RnaCodon(A, A, G), // Lys
-                RnaCodon(C, A, U), // His
-                RnaCodon(A, U, G), // Met
-                RnaCodon(A, C, U), // Thr
-                RnaCodon(A, A, A), // Lys
+                [A, U, G].into(), // Met
+                [U, G, A].into(), // Ter
+                [U, G, A].into(), // Ter
+                [A, A, G].into(), // Lys
+                [C, A, U].into(), // His
+                [A, U, G].into(), // Met
+                [A, C, U].into(), // Thr
+                [A, A, A].into(), // Lys
             ]
         );
     }
