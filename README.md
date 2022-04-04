@@ -1,14 +1,41 @@
 # plasmid
 > Rust Genetic Engineering Toolkit
 
-Scope:
-- dna sequence modeling
-- rna sequence modeling
-- dna transcription
-- rna translation
+## Scope
+
+- genetic sequence modeling
+  - [x] dna/rna nucleobases
+  - [x] dna/rna nucleotide triplets
+  - [x] dna/rna bp and anticodon handling
+  - [ ] dynamic dna/rna editing (`seq` module)
+    - [ ] push/pop nucleobases
+    - [ ] insert/remove nucleobases
+    - [ ] substitute nucleobases
+  - [ ] dna transcription
+  - [ ] rna reverse transcription
+  - [ ] rna polypeptide translation
+  - [ ] advanced dna alphabets
+    - [x] `ACGT` (see `DnaNucleoBase`)
+    - [x] `ACGU` (see `RnaNucleoBase`)
+    - [ ] `ACGTUN` (not sure if needed?)
+    - [ ] `ACGTUWSMKRYBDHVN`-` (IUPAC)
+- genetic sequence analysis
+  - [ ] gc<sup>n</sup> content
+  - [ ] at/gc content
+  - [ ] hairpin detection
+  - [ ] open reading frame detection
+  - [ ] cut site detection
 - annotation
+  - [ ] general sequence annotation
+  - [ ] automatic annotation
 - visualization
+  - [ ] simple text-based output
+  - [ ] plasmid svg generation
 - import / export
+  - [ ] fasta
+  - [ ] fastq
+  - [ ] sam
+  - [ ] custom?
 
 ## Modules
 
