@@ -9,6 +9,12 @@
 ### DNA and RNA codon tables
 > https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables
 
+Base pairs:
+```
+A -> T
+C -> G
+```
+
 ### Start Codon
 > https://en.wikipedia.org/wiki/Start_codon
 
