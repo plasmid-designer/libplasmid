@@ -1,6 +1,17 @@
 # plasmid
 > Rust Genetic Engineering Toolkit
 
+## Modules
+
+| Module   | Description |
+| -------- | ----------- |
+| `dna`    | DNA Processing |
+| `rna`    | RNA Processing |
+| `eaa`    | Essential Amino Acid Processing |
+| `seq`    | Genetic Sequence Editing and Analysis |
+| `vis`    | Visualization Tools |
+| `traits` | Helpful Traits |
+
 ## Scope
 
 - genetic sequence modeling
@@ -36,17 +47,6 @@
   - [ ] fastq
   - [ ] sam
   - [ ] custom?
-
-## Modules
-
-| Module   | Description |
-| -------- | ----------- |
-| `dna`    | DNA Processing |
-| `rna`    | RNA Processing |
-| `eaa`    | Essential Amino Acid Processing |
-| `seq`    | Genetic Sequence Editing and Analysis |
-| `vis`    | Visualization Tools |
-| `traits` | Helpful Traits |
 
 ### Examples
 
