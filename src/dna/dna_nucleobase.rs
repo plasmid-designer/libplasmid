@@ -4,61 +4,72 @@ use crate::traits::*;
 
 /// RNA Nucleobase
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum RnaNucleoBase {
+pub enum DnaNucleoBase {
     /// Adenine
     A,
     /// Cytosine
     C,
     /// Guanine
     G,
-    /// Uracil
-    U,
+    /// Thymine
+    T,
 }
 
-impl Display for RnaNucleoBase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use self::RnaNucleoBase::*;
+impl NucleoBase for DnaNucleoBase {
+    fn bonding_partner(&self) -> Self {
+        use self::DnaNucleoBase::*;
         match self {
-            A => write!(f, "Adenine"),
-            C => write!(f, "Cytosine"),
-            G => write!(f, "Guanine"),
-            U => write!(f, "Uracil"),
+            A => T,
+            T => A,
+            C => G,
+            G => C,
         }
     }
 }
 
-impl TryFromLetter for RnaNucleoBase {
+impl Display for DnaNucleoBase {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use self::DnaNucleoBase::*;
+        match self {
+            A => write!(f, "Adenine"),
+            C => write!(f, "Cytosine"),
+            G => write!(f, "Guanine"),
+            T => write!(f, "Thymine"),
+        }
+    }
+}
+
+impl TryFromLetter for DnaNucleoBase {
     fn try_from_letter(c: char) -> Option<Self> {
-        use self::RnaNucleoBase::*;
+        use self::DnaNucleoBase::*;
         match c.to_ascii_uppercase() {
             'A' => Some(A),
             'C' => Some(C),
             'G' => Some(G),
-            'U' => Some(U),
-            'Ψ' => Some(U), // Pseudouridine
+            'T' => Some(T),
             _ => None,
         }
     }
 }
 
-impl ToLetter for RnaNucleoBase {
+impl ToLetter for DnaNucleoBase {
     fn to_letter(&self) -> char {
-        use self::RnaNucleoBase::*;
+        use self::DnaNucleoBase::*;
         match self {
             A => 'A',
             C => 'C',
             G => 'G',
-            U => 'U',
+            T => 'T',
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::RnaNucleoBase;
+    use super::DnaNucleoBase;
 
     #[test]
-    fn test_rna_base_to_string() {
-        assert_eq!(RnaNucleoBase::U.to_string(), format!("Uracil"))
+    fn test_dna_base_to_string() {
+        assert_eq!(DnaNucleoBase::T.to_string(), format!("Thymine"))
     }
 }

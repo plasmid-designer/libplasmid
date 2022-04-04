@@ -5,6 +5,16 @@ use super::RnaNucleoBase;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct RnaCodon(pub RnaNucleoBase, pub RnaNucleoBase, pub RnaNucleoBase);
 
+impl Codon<RnaNucleoBase> for RnaCodon {
+    fn from_triplet(triplet: (RnaNucleoBase, RnaNucleoBase, RnaNucleoBase)) -> RnaCodon {
+        RnaCodon(triplet.0, triplet.1, triplet.2)
+    }
+
+    fn anticodon(&self) -> RnaCodon {
+        todo!()
+    }
+}
+
 impl<T> TryFromStr<'_, T> for RnaCodon
 where
     T: AsRef<str>,
