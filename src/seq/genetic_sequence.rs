@@ -44,13 +44,72 @@ where
     {
         for c in s.as_ref().chars() {
             let base = B::try_from_letter(c)?;
-            self.add_base(base)
+            self.push_base(base)
         }
         Some(())
     }
 
-    pub fn add_base(&mut self, base: B) {
+    pub fn push_base(&mut self, base: B) {
         self.sequence.push(base)
+    }
+
+    /// Remove the last nucleobase from the sequence and return it, or None if it is empty.
+    pub fn pop_base(&mut self) -> Option<B> {
+        self.sequence.pop()
+    }
+
+    pub fn push_codon(&mut self, codon: C) {
+        self.sequence.extend(codon.to_triplet_arr())
+    }
+
+    /// Remove the last codon from the sequence and return it, or None if it is empty.
+    /// The function will return the last proper codon in the sequence.
+    /// 
+    /// Use `#pop_codon_unsafe` if you need a codon from the last three nucleobases.
+    /// 
+    /// Example:
+    /// ```rust
+    /// use plasmid::seq::DnaSequence;
+    /// use plasmid::dna::DnaNucleoBase::*;
+    /// 
+    /// let mut seq1 = DnaSequence::from_str("AGTAA").unwrap();
+    /// let seq1_codon = seq1.pop_codon().unwrap(); // AGT
+    /// assert_eq!(seq1_codon, [A, G, T].into());
+    /// 
+    /// let mut seq2 = DnaSequence::from_str("AA").unwrap();
+    /// let seq2_codon = seq2.pop_codon(); // None
+    /// assert!(seq2_codon.is_none());
+    /// ```
+    pub fn pop_codon(&mut self) -> Option<C> {
+        self.codons().last()
+    }
+
+    /// Remove the last codon from the sequence and return it, or None if it is empty.
+    /// This function will build a codon from the last nucleotide triplet.
+    /// 
+    /// ```rust
+    /// use plasmid::seq::DnaSequence;
+    /// use plasmid::dna::DnaNucleoBase::*;
+    /// 
+    /// let mut seq1 = DnaSequence::from_str("AGTAA").unwrap();
+    /// let seq1_codon = seq1.pop_codon_unsafe().unwrap(); // TAA
+    /// assert_eq!(seq1_codon, [T, A, A].into());
+    /// 
+    /// let mut seq2 = DnaSequence::from_str("AA").unwrap();
+    /// let seq2_codon = seq2.pop_codon_unsafe(); // None
+    /// assert!(seq2_codon.is_none());
+    /// ```
+    pub fn pop_codon_unsafe(&mut self) -> Option<C> {
+        let seq: [B; 3] = self.sequence
+            .iter()
+            .rev()
+            .take(3)
+            .rev()
+            .cloned()
+            .collect::<Vec<B>>()
+            .try_into()
+            .ok()?;
+        Some(C::from_triplet_arr(seq))
     }
 
     pub fn codons(&self) -> impl Iterator<Item = C> + '_ {
