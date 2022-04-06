@@ -1,10 +1,16 @@
-use crate::traits::*;
+use crate::{traits::*, eaa::Eaa};
 
 use super::RnaNucleotide;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct RnaCodon {
     triplet: [RnaNucleotide; 3],
+}
+
+impl RnaCodon {
+    pub fn translate(&self) -> Eaa {
+        Eaa::from(self)
+    }
 }
 
 impl_codon_traits!(RnaNucleotide => RnaCodon);

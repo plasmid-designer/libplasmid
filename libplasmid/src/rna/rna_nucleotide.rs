@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::traits::*;
+use crate::{traits::*, uni::IupacNucleotide};
 
 /// RNA Nucleobase
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -16,7 +16,7 @@ pub enum RnaNucleotide {
 }
 
 impl Nucleotide for RnaNucleotide {
-    fn bonding_partner(&self) -> RnaNucleotide {
+    fn complement(&self) -> RnaNucleotide {
         use self::RnaNucleotide::*;
         match self {
             A => U,
@@ -61,6 +61,18 @@ impl ToLetter for RnaNucleotide {
             C => 'C',
             G => 'G',
             U => 'U',
+        }
+    }
+}
+
+impl ToIupac for RnaNucleotide {
+    fn to_iupac(&self) -> IupacNucleotide {
+        use self::RnaNucleotide::*;
+        match self {
+            A => IupacNucleotide::A,
+            C => IupacNucleotide::C,
+            G => IupacNucleotide::G,
+            U => IupacNucleotide::T,
         }
     }
 }

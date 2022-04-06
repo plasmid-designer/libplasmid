@@ -18,24 +18,24 @@
   - [x] dna/rna nucleotides
   - [x] dna/rna nucleotide triplets
   - [x] dna/rna bp and anticodon handling
+  - [x] dna/rna iupac sequence matching
   - [ ] dynamic dna/rna editing (`seq` module)
     - [x] always keep nucleotide sequence
     - [x] nucleotide triplet iterator
+    - [x] reverse complement iterator
     - [x] push/pop nucleotides
     - [x] push/pop triplets
     - [ ] insert/remove nucleotides
     - [ ] substitute nucleotides
     - [ ] base-pair iterator
-    - [ ] anticodon iterator
     - [ ] polypeptide iterator (lazy translation)
-  - [ ] dna transcription
+  - [x] dna transcription
   - [ ] rna reverse transcription
   - [x] rna polypeptide translation
-  - [ ] genetic codes
+  - [x] genetic codes
     - [x] `ACGT` (see `DnaNucleotide`)
     - [x] `ACGU` (see `RnaNucleotide`)
-    - [ ] `ACGTUN` (not sure if needed?)
-    - [ ] `ACGTUWSMKRYBDHVN*-` (IUPAC)
+    - [x] `ACGTWSMKRYBDHVN-` (IUPAC)
 - genetic sequence analysis
   - [ ] gc<sup>n</sup> content
   - [ ] at/gc content

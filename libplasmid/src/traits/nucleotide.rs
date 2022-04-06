@@ -1,9 +1,9 @@
 pub trait Nucleotide {
-    fn bonding_partner(&self) -> Self;
+    fn complement(&self) -> Self;
     fn base_pair(&self) -> (Self, Self)
     where
         Self: Sized + Copy,
     {
-        (*self, self.bonding_partner())
+        (*self, self.complement())
     }
 }

@@ -17,7 +17,7 @@ macro_rules! impl_codon_traits {
             }
 
             fn anticodon(&self) -> Self {
-                Self::from_triplet_arr(self.to_triplet_arr().map(|base| base.bonding_partner()))
+                Self::from_triplet_arr(self.to_triplet_arr().map(|base| base.complement()))
             }
         }
 

@@ -1,10 +1,30 @@
-use crate::traits::*;
+use std::collections::HashMap;
+
+use crate::{traits::*, rna::{RnaCodon, RnaNucleotide}, eaa::Eaa};
 
 use super::DnaNucleotide;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct DnaCodon {
     triplet: [DnaNucleotide; 3],
+}
+
+impl DnaCodon {
+    pub fn transcribe(&self) -> RnaCodon {
+        let map = {
+            let mut map = HashMap::new();
+            map.insert(&DnaNucleotide::A, RnaNucleotide::A);
+            map.insert(&DnaNucleotide::C, RnaNucleotide::C);
+            map.insert(&DnaNucleotide::T, RnaNucleotide::U);
+            map.insert(&DnaNucleotide::G, RnaNucleotide::G);
+            map
+        };
+        RnaCodon::from_triplet_arr(self.triplet.map(|b| *map.get(&b).unwrap()))
+    }
+
+    pub fn translate(&self) -> Eaa {
+        Eaa::from(&self.transcribe())
+    }
 }
 
 impl_codon_traits!(DnaNucleotide => DnaCodon);

@@ -13,7 +13,7 @@ where
 
 impl<B, C> GeneticSequence<B, C>
 where
-    B: Nucleotide + TryFromLetter + Copy,
+    B: Nucleotide + TryFromLetter + ToLetter + Copy,
     C: Codon<B>,
 {
     pub fn new() -> Self {
@@ -35,7 +35,7 @@ where
 
 impl<B, C> GeneticSequence<B, C>
 where
-    B: Nucleotide + TryFromLetter + Copy,
+    B: Nucleotide + TryFromLetter + ToLetter + Copy,
     C: Codon<B> + Sized,
 {
     /// Append a nucleobase to the end of the sequence.
@@ -206,6 +206,21 @@ where
         &self.sequence
     }
 
+    /// Convert a genetic sequence to a Vec of its anti-nucleotides.
+    /// 
+    /// # Examples
+    /// ```
+    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// 
+    /// let seq = DnaSequence::from_str("TGATCC").unwrap();
+    /// let nucleotides = seq.as_reverse_complement();
+    /// 
+    /// assert_eq!(nucleotides, [A, C, T, A, G, G])
+    /// ```
+    pub fn as_reverse_complement(&self) -> Vec<B> {
+        self.sequence.iter().map(|b| b.complement()).collect::<Vec<_>>()
+    }
+
     /// Convert a genetic sequence to a Vec of its codons.
     /// 
     /// # Examples
@@ -218,6 +233,14 @@ where
     /// ```
     pub fn as_codons(&self) -> Vec<C> {
         self.codons().collect()
+    }
+
+    pub fn to_nucleotide_string(&self) -> String {
+        self.as_nucleotides().iter().map(|b| b.to_letter()).collect()
+    }
+
+    pub fn to_reverse_complement_string(&self) -> String {
+        self.as_reverse_complement().iter().map(|b| b.to_letter()).collect()
     }
 
     // TODO: Find some way to do this
@@ -252,6 +275,12 @@ impl<B, C> Index<usize> for GeneticSequence<B, C> where B: Nucleotide, C: Codon<
 impl<B, C> IndexMut<usize> for GeneticSequence<B, C> where B: Nucleotide, C: Codon<B> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.sequence[index]
+    }
+}
+
+impl<B, C> NucleotideSequence for GeneticSequence<B, C> where B: Nucleotide + ToIupac, C: Codon<B> {
+    fn matches<T>(&self, seq: &[T]) -> bool where T: ToIupac {
+        self.sequence.iter().zip(seq).all(|(a, b)| a.to_iupac().matches(&b.to_iupac()))
     }
 }
 
