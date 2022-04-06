@@ -1,4 +1,4 @@
-pub trait NucleoBase {
+pub trait Nucleotide {
     fn bonding_partner(&self) -> Self;
     fn base_pair(&self) -> (Self, Self)
     where

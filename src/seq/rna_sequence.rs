@@ -1,5 +1,5 @@
 use super::GeneticSequence;
-use crate::rna::{RnaCodon, RnaNucleoBase};
+use crate::rna::{RnaCodon, RnaNucleotide};
 
 /// Dynamic RNA sequence
-pub type RnaSequence = GeneticSequence<RnaNucleoBase, RnaCodon>;
+pub type RnaSequence = GeneticSequence<RnaNucleotide, RnaCodon>;

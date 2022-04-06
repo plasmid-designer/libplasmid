@@ -3,8 +3,8 @@ use std::fmt::Display;
 use crate::traits::*;
 
 /// RNA Nucleobase
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum DnaNucleoBase {
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum DnaNucleotide {
     /// Adenine
     A,
     /// Cytosine
@@ -15,9 +15,9 @@ pub enum DnaNucleoBase {
     T,
 }
 
-impl NucleoBase for DnaNucleoBase {
+impl Nucleotide for DnaNucleotide {
     fn bonding_partner(&self) -> Self {
-        use self::DnaNucleoBase::*;
+        use self::DnaNucleotide::*;
         match self {
             A => T,
             T => A,
@@ -27,9 +27,9 @@ impl NucleoBase for DnaNucleoBase {
     }
 }
 
-impl Display for DnaNucleoBase {
+impl Display for DnaNucleotide {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use self::DnaNucleoBase::*;
+        use self::DnaNucleotide::*;
         match self {
             A => write!(f, "Adenine"),
             C => write!(f, "Cytosine"),
@@ -39,9 +39,9 @@ impl Display for DnaNucleoBase {
     }
 }
 
-impl TryFromLetter for DnaNucleoBase {
+impl TryFromLetter for DnaNucleotide {
     fn try_from_letter(c: char) -> Option<Self> {
-        use self::DnaNucleoBase::*;
+        use self::DnaNucleotide::*;
         match c.to_ascii_uppercase() {
             'A' => Some(A),
             'C' => Some(C),
@@ -52,9 +52,9 @@ impl TryFromLetter for DnaNucleoBase {
     }
 }
 
-impl ToLetter for DnaNucleoBase {
+impl ToLetter for DnaNucleotide {
     fn to_letter(&self) -> char {
-        use self::DnaNucleoBase::*;
+        use self::DnaNucleotide::*;
         match self {
             A => 'A',
             C => 'C',
@@ -66,10 +66,10 @@ impl ToLetter for DnaNucleoBase {
 
 #[cfg(test)]
 mod tests {
-    use super::DnaNucleoBase;
+    use super::DnaNucleotide;
 
     #[test]
     fn test_dna_base_to_string() {
-        assert_eq!(DnaNucleoBase::T.to_string(), format!("Thymine"))
+        assert_eq!(DnaNucleotide::T.to_string(), format!("Thymine"))
     }
 }

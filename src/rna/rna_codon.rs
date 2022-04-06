@@ -1,18 +1,18 @@
 use crate::traits::*;
 
-use super::RnaNucleoBase;
+use super::RnaNucleotide;
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct RnaCodon {
-    triplet: [RnaNucleoBase; 3],
+    triplet: [RnaNucleotide; 3],
 }
 
-impl_codon_traits!(RnaNucleoBase => RnaCodon);
+impl_codon_traits!(RnaNucleotide => RnaCodon);
 
 #[cfg(test)]
 mod tests {
     use super::RnaCodon;
-    use super::RnaNucleoBase::*;
+    use super::RnaNucleotide::*;
     use crate::traits::*;
 
     #[test]

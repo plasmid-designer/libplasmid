@@ -3,8 +3,8 @@ use std::fmt::Display;
 use crate::traits::*;
 
 /// RNA Nucleobase
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum RnaNucleoBase {
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum RnaNucleotide {
     /// Adenine
     A,
     /// Cytosine
@@ -15,9 +15,9 @@ pub enum RnaNucleoBase {
     U,
 }
 
-impl NucleoBase for RnaNucleoBase {
-    fn bonding_partner(&self) -> RnaNucleoBase {
-        use self::RnaNucleoBase::*;
+impl Nucleotide for RnaNucleotide {
+    fn bonding_partner(&self) -> RnaNucleotide {
+        use self::RnaNucleotide::*;
         match self {
             A => U,
             U => A,
@@ -27,9 +27,9 @@ impl NucleoBase for RnaNucleoBase {
     }
 }
 
-impl Display for RnaNucleoBase {
+impl Display for RnaNucleotide {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use self::RnaNucleoBase::*;
+        use self::RnaNucleotide::*;
         match self {
             A => write!(f, "Adenine"),
             C => write!(f, "Cytosine"),
@@ -39,9 +39,9 @@ impl Display for RnaNucleoBase {
     }
 }
 
-impl TryFromLetter for RnaNucleoBase {
+impl TryFromLetter for RnaNucleotide {
     fn try_from_letter(c: char) -> Option<Self> {
-        use self::RnaNucleoBase::*;
+        use self::RnaNucleotide::*;
         match c.to_ascii_uppercase() {
             'A' => Some(A),
             'C' => Some(C),
@@ -53,9 +53,9 @@ impl TryFromLetter for RnaNucleoBase {
     }
 }
 
-impl ToLetter for RnaNucleoBase {
+impl ToLetter for RnaNucleotide {
     fn to_letter(&self) -> char {
-        use self::RnaNucleoBase::*;
+        use self::RnaNucleotide::*;
         match self {
             A => 'A',
             C => 'C',
@@ -67,10 +67,10 @@ impl ToLetter for RnaNucleoBase {
 
 #[cfg(test)]
 mod tests {
-    use super::RnaNucleoBase;
+    use super::RnaNucleotide;
 
     #[test]
     fn test_rna_base_to_string() {
-        assert_eq!(RnaNucleoBase::U.to_string(), format!("Uracil"))
+        assert_eq!(RnaNucleotide::U.to_string(), format!("Uracil"))
     }
 }

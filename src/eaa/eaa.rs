@@ -139,7 +139,7 @@ impl ToString for Eaa {
 impl From<&RnaCodon> for Eaa {
     fn from(rna: &RnaCodon) -> Self {
         use crate::eaa::Eaa::*;
-        use crate::rna::RnaNucleoBase::*;
+        use crate::rna::RnaNucleotide::*;
         match rna.to_triplet_arr() {
             [U, U, U] | [U, U, C] => Phe,
             [U, U, A] | [U, U, G] | [C, U, U] | [C, U, C] | [C, U, A] | [C, U, G] => Leu,

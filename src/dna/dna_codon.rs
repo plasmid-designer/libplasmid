@@ -1,18 +1,18 @@
 use crate::traits::*;
 
-use super::DnaNucleoBase;
+use super::DnaNucleotide;
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct DnaCodon {
-    triplet: [DnaNucleoBase; 3],
+    triplet: [DnaNucleotide; 3],
 }
 
-impl_codon_traits!(DnaNucleoBase => DnaCodon);
+impl_codon_traits!(DnaNucleotide => DnaCodon);
 
 #[cfg(test)]
 mod tests {
     use super::DnaCodon;
-    use super::DnaNucleoBase::*;
+    use super::DnaNucleotide::*;
     use crate::traits::*;
 
     #[test]

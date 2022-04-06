@@ -15,15 +15,16 @@
 ## Scope
 
 - genetic sequence modeling
-  - [x] dna/rna nucleobases
+  - [x] dna/rna nucleotides
   - [x] dna/rna nucleotide triplets
   - [x] dna/rna bp and anticodon handling
   - [ ] dynamic dna/rna editing (`seq` module)
-    - [x] always keep nucleobase sequence
+    - [x] always keep nucleotide sequence
     - [x] nucleotide triplet iterator
-    - [x] push/pop nucleobases
-    - [ ] insert/remove nucleobases
-    - [ ] substitute nucleobases
+    - [x] push/pop nucleotides
+    - [x] push/pop triplets
+    - [ ] insert/remove nucleotides
+    - [ ] substitute nucleotides
     - [ ] base-pair iterator
     - [ ] anticodon iterator
     - [ ] polypeptide iterator (lazy translation)
@@ -31,8 +32,8 @@
   - [ ] rna reverse transcription
   - [x] rna polypeptide translation
   - [ ] genetic codes
-    - [x] `ACGT` (see `DnaNucleoBase`)
-    - [x] `ACGU` (see `RnaNucleoBase`)
+    - [x] `ACGT` (see `DnaNucleotide`)
+    - [x] `ACGU` (see `RnaNucleotide`)
     - [ ] `ACGTUN` (not sure if needed?)
     - [ ] `ACGTUWSMKRYBDHVN*-` (IUPAC)
 - genetic sequence analysis

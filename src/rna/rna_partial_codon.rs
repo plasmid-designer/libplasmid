@@ -1,8 +1,8 @@
-use super::{RnaCodon, RnaNucleoBase};
+use super::{RnaCodon, RnaNucleotide};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct RnaPartialCodon {
-    bases: Vec<RnaNucleoBase>,
+    bases: Vec<RnaNucleotide>,
 }
 
 impl RnaPartialCodon {
@@ -12,7 +12,7 @@ impl RnaPartialCodon {
         }
     }
 
-    pub fn from_slice(slice: &[RnaNucleoBase]) -> RnaPartialCodon {
+    pub fn from_slice(slice: &[RnaNucleotide]) -> RnaPartialCodon {
         let mut pcodon = RnaPartialCodon::new();
         for base in slice[0..(slice.len().min(3))].iter() {
             pcodon.push(*base).unwrap();
@@ -22,7 +22,7 @@ impl RnaPartialCodon {
 }
 
 impl RnaPartialCodon {
-    pub fn push(&mut self, item: RnaNucleoBase) -> Result<(), ()> {
+    pub fn push(&mut self, item: RnaNucleotide) -> Result<(), ()> {
         if self.nucleobase_count() == 3 {
             Err(())
         } else {
@@ -31,7 +31,7 @@ impl RnaPartialCodon {
         }
     }
 
-    pub fn pop(&mut self) -> Option<RnaNucleoBase> {
+    pub fn pop(&mut self) -> Option<RnaNucleotide> {
         self.bases.pop()
     }
 
@@ -61,14 +61,14 @@ mod tests {
 
     #[test]
     fn test_rna_partial_codon_nucleobase_count() {
-        use crate::rna::RnaNucleoBase::*;
+        use crate::rna::RnaNucleotide::*;
         let pcodon = RnaPartialCodon::from_slice(&[A, U]);
         assert_eq!(pcodon.nucleobase_count(), 2);
     }
 
     #[test]
     fn test_rna_partial_codon_to_codon() {
-        use crate::rna::RnaNucleoBase::*;
+        use crate::rna::RnaNucleotide::*;
         let pcodon = RnaPartialCodon::from_slice(&[A, U, G]);
         let codon = pcodon.to_codon();
         assert!(codon.is_some());
