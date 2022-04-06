@@ -1,6 +1,16 @@
 # plasmid
 > Rust Genetic Engineering Toolkit
 
+Plasmid is a genetics / bioinformatics library.<br>
+
+It consists of two parts:
+- `libplasmid`:<br>
+  Library for genetic code creation, editing and analysis
+- `plasmid-cli`:<br>
+  CLI for genetic sequence processing
+
+This is a work-in-progress. I should also mention that I'm not at all trained in bioinformatics, biochemistry, genetics or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
+
 ## Modules
 
 | Module   | Description |
@@ -9,6 +19,7 @@
 | `rna`    | RNA Processing |
 | `eaa`    | Essential Amino Acid Processing |
 | `seq`    | Genetic Sequence Editing and Analysis |
+| `uni`    | IUPAC Sequence Processing |
 | `vis`    | Visualization Tools |
 | `traits` | Helpful Traits |
 
