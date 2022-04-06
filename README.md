@@ -7,7 +7,8 @@ It consists of two parts:
 - `libplasmid`: Library for genetic code creation, editing and analysis
 - `plasmid-cli`: CLI for genetic sequence processing
 
-This is a work-in-progress. I should also mention that I'm not at all trained in bioinformatics, biochemistry, genetics or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
+This is a work-in-progress.<br>
+I should also mention that I'm not at all trained in bioinformatics, biochemistry, genetics or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
 
 ## Modules
 
