@@ -1,2 +1,9 @@
-/target
+# Rust
+target/
 Cargo.lock
+
+# Node
+node_modules/
+
+# macOS
+.DS_Store
