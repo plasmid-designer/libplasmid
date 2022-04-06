@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 
-use crate::{traits::*, rna::{RnaCodon, RnaNucleotide}, eaa::Eaa};
+use crate::{
+    eaa::Eaa,
+    rna::{RnaCodon, RnaNucleotide},
+    traits::*,
+};
 
 use super::DnaNucleotide;
 

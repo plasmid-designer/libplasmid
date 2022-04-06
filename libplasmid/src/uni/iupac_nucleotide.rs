@@ -86,7 +86,7 @@ impl Nucleotide for IupacNucleotide {
             H => D,
             V => B,
             N => N,
-            Gap => Gap
+            Gap => Gap,
         }
     }
 }

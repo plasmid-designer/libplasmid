@@ -1,4 +1,4 @@
-use crate::{traits::*, eaa::Eaa};
+use crate::{eaa::Eaa, traits::*};
 
 use super::RnaNucleotide;
 

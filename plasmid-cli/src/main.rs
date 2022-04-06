@@ -1,13 +1,14 @@
 use clap::{Parser, Subcommand};
-use plasmid::{prelude::*, traits::{ToLetter, TryFromLetter}};
+use plasmid::{
+    prelude::*,
+    traits::{ToLetter, TryFromLetter},
+};
 
 #[derive(Debug, Subcommand)]
 #[allow(non_camel_case_types)]
 enum Commands {
     /// Pretty print sequence
-    pp {
-        sequence: String,
-    },
+    pp { sequence: String },
     /// Match sequences
     r#match {
         /// The first DNA sequence (ACGT)
@@ -39,8 +40,11 @@ fn main() -> Result<(), ()> {
                 .iter()
                 .map(|c| format!(" {} ", c.translate().to_letter()))
                 .collect::<String>();
-            println!("5' -> {} -> 3'\n3' <- {} <- 5'\n      {}", nucleotides, antinucleotides, codonstr);
-        },
+            println!(
+                "5' -> {} -> 3'\n3' <- {} <- 5'\n      {}",
+                nucleotides, antinucleotides, codonstr
+            );
+        }
         // Match
         Commands::r#match { sequence, pattern } => {
             let seq = DnaSequence::from_str(sequence)?;

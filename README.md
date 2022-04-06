@@ -41,10 +41,10 @@
   - [ ] at/gc content
   - [ ] hairpin detection
   - [ ] open reading frame detection
-  - [ ] cut site detection
+  - [x] cut site detection
 - annotation
   - [ ] general sequence annotation
-  - [ ] automatic annotation
+  - [x] auto-annotate restriction sites
 - visualization
   - [ ] simple text-based output
   - [ ] plasmid svg generation

@@ -12,14 +12,19 @@ pub enum CutMode {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct RestrictionEnzyme {
-    name: String,
-    before: Vec<IupacNucleotide>,
-    after: Vec<IupacNucleotide>,
+    pub name: String,
+    pub before: Vec<IupacNucleotide>,
+    pub after: Vec<IupacNucleotide>,
     mode: CutMode,
 }
 
 impl RestrictionEnzyme {
-    pub fn new(name: &str, before: &[IupacNucleotide], after: &[IupacNucleotide], mode: CutMode) -> Self {
+    pub fn new(
+        name: &str,
+        before: &[IupacNucleotide],
+        after: &[IupacNucleotide],
+        mode: CutMode,
+    ) -> Self {
         Self {
             name: name.to_string(),
             before: Vec::from_iter(before.iter().map(|&n| n)),
@@ -32,7 +37,7 @@ impl RestrictionEnzyme {
 macro_rules! define_enzyme {
     ($mode:ident; $name:ident: $before:expr, $after:expr) => {
         RestrictionEnzyme::new(stringify!($name), &$before, &$after, CutMode::$mode)
-    }
+    };
 }
 
 lazy_static! {

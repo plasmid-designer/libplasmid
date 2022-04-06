@@ -9,7 +9,7 @@ pub mod dna;
 pub mod rna;
 #[macro_use]
 pub mod eaa;
-pub mod uni;
-pub mod seq;
-pub mod vis;
 pub mod prelude;
+pub mod seq;
+pub mod uni;
+pub mod vis;
