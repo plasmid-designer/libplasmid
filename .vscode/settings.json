@@ -6,5 +6,6 @@
         "nucleobase",
         "Pseudouridine",
         "pseudouridylyl"
-    ]
+    ],
+    "svg.preview.background": "editor"
 }
