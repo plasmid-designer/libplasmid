@@ -73,20 +73,24 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
 
 ### Examples
 
-Load DNA from string:
 ```rs
-let dna = "ATGGTTCGGCAATTT";
-if let Some(seq) = DnaSequence.from_str(dna) {
-    // Print sequence
-    println!("{}", seq);
-}
-```
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+  let dna = "ATGGTTCGGCAATTT";
 
-Load RNA from string:
-```rs
-let rna = "AUGGUUCGGCAAUUU";
-if let Some(seq) = RnaSequence.from_str(rna) {
-    // Print sequence
-    println!("{}", seq);
+  // Load DNA from string
+  let mut seq = DnaSequence.from_str(dna)?;
+
+  // Annotate restriction enzyme cut sites
+  seq.annotate_restriction_enzymes();
+
+  // Check if NdeI cut site exists
+  if let Some(ann) = seq.annotation_iter().find(|ann| ann.text == "NdeI") {
+    println!("Found NdeI cut site (start: {}; end: {})", ann.start, ann.end);
+  }
+
+  // Generate SVG of circular DNA
+  let conf = SvgExportConfig::circular();
+  let svg = SvgExport::new(conf, seq.as_nucleotides());
+  println!("{}", svg.export()); // print svg code
 }
 ```
