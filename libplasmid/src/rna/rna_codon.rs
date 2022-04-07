@@ -22,21 +22,17 @@ mod tests {
     use crate::traits::*;
 
     #[test]
-    fn test_rna_codon_from_string() {
-        let result = RnaCodon::try_from_str("AUG");
-        assert!(result.is_some());
-        if let Some(codon) = result {
-            assert_eq!(codon, RnaCodon::from_triplet_arr([A, U, G]));
-        }
+    fn test_rna_codon_from_string() -> anyhow::Result<()> {
+        let codon = RnaCodon::try_from_str("AUG")?;
+        assert_eq!(codon, RnaCodon::from_triplet_arr([A, U, G]));
+        Ok(())
     }
 
     #[test]
-    fn test_rna_codon_from_string_psi() {
-        let result = RnaCodon::try_from_str("AΨG");
-        assert!(result.is_some());
-        if let Some(codon) = result {
-            assert_eq!(codon, [A, U, G].into());
-        }
+    fn test_rna_codon_from_string_psi() -> anyhow::Result<()> {
+        let codon = RnaCodon::try_from_str("AΨG")?;
+        assert_eq!(codon, [A, U, G].into());
+        Ok(())
     }
 
     #[test]

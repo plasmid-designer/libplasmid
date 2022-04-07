@@ -25,18 +25,22 @@ macro_rules! impl_codon_traits {
         where
             T: AsRef<str>,
         {
-            fn try_from_str(value: T) -> Option<Self> {
+            fn try_from_str(value: T) -> anyhow::Result<Self> {
+                use crate::err::PlasmidError;
                 use crate::traits::{Codon, TryFromLetter};
                 let chars = value.as_ref().chars().collect::<Vec<_>>();
                 if chars.len() != 3 {
-                    return None;
+                    bail!(PlasmidError::InvalidNucleotideSequence {
+                        nucleotide_type: <$base>::nucleotide_type(),
+                        seq: value.as_ref().to_string()
+                    })
                 }
                 let mut nucleobase_codes: Vec<$base> = Vec::with_capacity(3);
                 for char in chars {
                     nucleobase_codes.push(TryFromLetter::try_from_letter(char)?)
                 }
                 let arr = nucleobase_codes.as_slice().try_into().unwrap();
-                Some(Codon::from_triplet_arr(arr))
+                Ok(Codon::from_triplet_arr(arr))
             }
         }
 

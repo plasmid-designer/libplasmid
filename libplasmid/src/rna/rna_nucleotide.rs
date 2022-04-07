@@ -1,6 +1,10 @@
 use std::fmt::Display;
 
-use crate::{traits::*, uni::IupacNucleotide};
+use crate::{
+    err::{PlasmidError, PlasmidNucleotideType},
+    traits::*,
+    uni::IupacNucleotide,
+};
 
 /// RNA Nucleobase
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -13,6 +17,16 @@ pub enum RnaNucleotide {
     G,
     /// Uracil
     U,
+}
+
+impl RnaNucleotide {
+    pub(crate) fn all_as_string() -> String {
+        "ACGUΨ".to_string()
+    }
+
+    pub(crate) fn nucleotide_type() -> PlasmidNucleotideType {
+        PlasmidNucleotideType::RNA
+    }
 }
 
 impl Nucleotide for RnaNucleotide {
@@ -40,15 +54,18 @@ impl Display for RnaNucleotide {
 }
 
 impl TryFromLetter for RnaNucleotide {
-    fn try_from_letter(c: char) -> Option<Self> {
+    fn try_from_letter(c: char) -> anyhow::Result<Self> {
         use self::RnaNucleotide::*;
         match c.to_ascii_uppercase() {
-            'A' => Some(A),
-            'C' => Some(C),
-            'G' => Some(G),
-            'U' => Some(U),
-            'Ψ' => Some(U), // Pseudouridine
-            _ => None,
+            'A' => Ok(A),
+            'G' => Ok(G),
+            'C' => Ok(C),
+            'U' => Ok(U),
+            'Ψ' => Ok(U), // Pseudouridine
+            _ => bail!(PlasmidError::InvalidNucleotide {
+                nucleotide_type: Self::nucleotide_type(),
+                char: c
+            }),
         }
     }
 }

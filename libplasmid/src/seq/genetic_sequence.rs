@@ -32,12 +32,12 @@ where
         }
     }
 
-    pub fn from_str<T>(s: T) -> Result<GeneticSequence<B, C>, ()>
+    pub fn from_str<T>(s: T) -> anyhow::Result<GeneticSequence<B, C>>
     where
         T: AsRef<str>,
     {
         let mut builder = GeneticSequence::<B, C>::new();
-        builder.push_base_str(s).ok_or(())?;
+        builder.push_base_str(s)?;
         Ok(builder)
     }
 }
@@ -76,7 +76,7 @@ where
     ///
     /// assert_eq!(seq.to_string(), "AGT");
     /// ```
-    pub fn push_base_str<T>(&mut self, s: T) -> Option<()>
+    pub fn push_base_str<T>(&mut self, s: T) -> anyhow::Result<()>
     where
         T: AsRef<str>,
     {
@@ -84,7 +84,7 @@ where
             let base = B::try_from_letter(c)?;
             self.push_base(base)
         }
-        Some(())
+        Ok(())
     }
 
     /// Append a codon to the end of the sequence.

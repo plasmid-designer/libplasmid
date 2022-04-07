@@ -10,5 +10,5 @@ where
     Self: Sized,
     T: AsRef<str>,
 {
-    fn try_from_str(s: T) -> Option<Self>;
+    fn try_from_str(s: T) -> anyhow::Result<Self>;
 }

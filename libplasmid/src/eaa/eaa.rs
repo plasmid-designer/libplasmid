@@ -1,3 +1,4 @@
+use crate::err::PlasmidError;
 use crate::rna::RnaCodon;
 use crate::traits::*;
 
@@ -49,30 +50,30 @@ pub enum Eaa {
 }
 
 impl TryFromLetter for Eaa {
-    fn try_from_letter(letter: char) -> Option<Self> {
+    fn try_from_letter(letter: char) -> anyhow::Result<Self> {
         use self::Eaa::*;
         match letter.to_ascii_uppercase() {
-            'A' => Some(Ala),
-            'R' => Some(Arg),
-            'N' => Some(Asn),
-            'D' => Some(Asp),
-            'C' => Some(Cys),
-            'Q' => Some(Gln),
-            'E' => Some(Glu),
-            'G' => Some(Gly),
-            'H' => Some(His),
-            'I' => Some(Ile),
-            'L' => Some(Leu),
-            'K' => Some(Lys),
-            'M' => Some(Met),
-            'F' => Some(Phe),
-            'P' => Some(Pro),
-            'S' => Some(Ser),
-            '*' => Some(Ter),
-            'W' => Some(Trp),
-            'Y' => Some(Tyr),
-            'V' => Some(Val),
-            _ => None,
+            'A' => Ok(Ala),
+            'R' => Ok(Arg),
+            'N' => Ok(Asn),
+            'D' => Ok(Asp),
+            'C' => Ok(Cys),
+            'Q' => Ok(Gln),
+            'E' => Ok(Glu),
+            'G' => Ok(Gly),
+            'H' => Ok(His),
+            'I' => Ok(Ile),
+            'L' => Ok(Leu),
+            'K' => Ok(Lys),
+            'M' => Ok(Met),
+            'F' => Ok(Phe),
+            'P' => Ok(Pro),
+            'S' => Ok(Ser),
+            '*' => Ok(Ter),
+            'W' => Ok(Trp),
+            'Y' => Ok(Tyr),
+            'V' => Ok(Val),
+            _ => bail!(PlasmidError::InvalidAminoAcid { char: letter }),
         }
     }
 }
@@ -173,7 +174,7 @@ impl<T> TryFromStr<'_, T> for Eaa
 where
     T: AsRef<str>,
 {
-    fn try_from_str(s: T) -> Option<Self> {
-        Some(Eaa::from(&RnaCodon::try_from_str(s)?))
+    fn try_from_str(s: T) -> anyhow::Result<Self> {
+        Ok(Eaa::from(&RnaCodon::try_from_str(s)?))
     }
 }

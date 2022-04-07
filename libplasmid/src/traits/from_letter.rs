@@ -6,5 +6,5 @@ pub trait TryFromLetter
 where
     Self: Sized,
 {
-    fn try_from_letter(c: char) -> Option<Self>;
+    fn try_from_letter(c: char) -> anyhow::Result<Self>;
 }

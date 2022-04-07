@@ -94,7 +94,7 @@ struct Args {
     command: Commands,
 }
 
-fn main() -> Result<(), ()> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     match args.command {
         // Pretty Print

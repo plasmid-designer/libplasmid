@@ -40,12 +40,10 @@ mod tests {
     use crate::traits::*;
 
     #[test]
-    fn test_dna_codon_from_string() {
-        let result = DnaCodon::try_from_str("ATG");
-        assert!(result.is_some());
-        if let Some(codon) = result {
-            assert_eq!(codon, [A, T, G].into());
-        }
+    fn test_dna_codon_from_string() -> anyhow::Result<()> {
+        let codon = DnaCodon::try_from_str("ATG")?;
+        assert_eq!(codon, [A, T, G].into());
+        Ok(())
     }
 
     #[test]

@@ -1,16 +1,17 @@
 #[macro_use]
-extern crate lazy_static;
+extern crate anyhow;
 
 #[macro_use]
+extern crate lazy_static;
+
+pub mod err;
+#[macro_use]
 pub mod traits;
-#[macro_use]
 pub mod dna;
-#[macro_use]
-pub mod rna;
-#[macro_use]
 pub mod eaa;
 pub mod exp;
 pub mod prelude;
+pub mod rna;
 pub mod seq;
 pub mod uni;
 pub mod vis;

@@ -1,4 +1,7 @@
-use crate::traits::*;
+use crate::{
+    err::{PlasmidError, PlasmidNucleotideType},
+    traits::*,
+};
 
 /// IUPAC Nucleotide
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -59,6 +62,14 @@ impl IupacNucleotide {
             Gap => n == &Gap,
         }
     }
+
+    pub(crate) fn all_as_string() -> String {
+        "ACGTWSMKRYBVDHN-".to_string()
+    }
+
+    pub(crate) fn nucleotide_type() -> PlasmidNucleotideType {
+        PlasmidNucleotideType::IUPAC
+    }
 }
 
 impl ToIupac for IupacNucleotide {
@@ -92,27 +103,30 @@ impl Nucleotide for IupacNucleotide {
 }
 
 impl TryFromLetter for IupacNucleotide {
-    fn try_from_letter(c: char) -> Option<Self> {
+    fn try_from_letter(c: char) -> anyhow::Result<Self> {
         use self::IupacNucleotide::*;
         match c.to_ascii_uppercase() {
-            'A' => Some(A),
-            'C' => Some(C),
-            'G' => Some(G),
-            'T' => Some(T),
-            'U' => Some(T),
-            'W' => Some(W),
-            'S' => Some(S),
-            'M' => Some(M),
-            'K' => Some(K),
-            'R' => Some(R),
-            'Y' => Some(Y),
-            'B' => Some(B),
-            'D' => Some(D),
-            'H' => Some(H),
-            'V' => Some(V),
-            'N' => Some(N),
-            '-' => Some(Gap),
-            _ => None,
+            'A' => Ok(A),
+            'C' => Ok(C),
+            'G' => Ok(G),
+            'T' => Ok(T),
+            'U' => Ok(T),
+            'W' => Ok(W),
+            'S' => Ok(S),
+            'M' => Ok(M),
+            'K' => Ok(K),
+            'R' => Ok(R),
+            'Y' => Ok(Y),
+            'B' => Ok(B),
+            'D' => Ok(D),
+            'H' => Ok(H),
+            'V' => Ok(V),
+            'N' => Ok(N),
+            '-' => Ok(Gap),
+            _ => bail!(PlasmidError::InvalidNucleotide {
+                nucleotide_type: Self::nucleotide_type(),
+                char: c
+            }),
         }
     }
 }
