@@ -15,12 +15,15 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
 
 | Module   | Description |
 | -------- | ----------- |
-| `dna`    | DNA Processing |
-| `rna`    | RNA Processing |
-| `eaa`    | Essential Amino Acid Processing |
+| `prelude`| Exports all essential types and traits |
+| `dna`    | DNA Nucleotide Processing |
+| `rna`    | RNA Nucleotide Processing |
+| `eaa`    | Amino Acid Processing |
 | `seq`    | Genetic Sequence Editing and Analysis |
 | `uni`    | IUPAC Sequence Processing |
 | `vis`    | Visualization Tools |
+| `imp`    | Import Helpers |
+| `exp`    | Export Helpers |
 | `traits` | Helpful Traits |
 
 ## Scope
@@ -30,39 +33,42 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
   - [x] dna/rna nucleotide triplets
   - [x] dna/rna bp and anticodon handling
   - [x] dna/rna iupac sequence matching
+  - [ ] sequence alignment
   - [ ] dynamic dna/rna editing (`seq` module)
     - [x] always keep nucleotide sequence
     - [x] nucleotide triplet iterator
     - [x] reverse complement iterator
     - [x] push/pop nucleotides
-    - [x] push/pop triplets
+    - [ ] push/pop codons
     - [ ] insert/remove nucleotides
     - [ ] substitute nucleotides
     - [ ] base-pair iterator
     - [ ] polypeptide iterator (lazy translation)
   - [x] dna transcription
-  - [ ] rna reverse transcription
   - [x] rna polypeptide translation
+  - [ ] amino acid reverse transcription
   - [x] genetic codes
     - [x] `ACGT` (see `DnaNucleotide`)
     - [x] `ACGU` (see `RnaNucleotide`)
-    - [x] `ACGTWSMKRYBDHVN-` (IUPAC)
+    - [x] `ACGTWSMKRYBDHVN-` (see `IupacNucleotide`)
 - genetic sequence analysis
-  - [ ] gc<sup>n</sup> content
-  - [ ] at/gc content
+  - [x] at-count, gc-count, at-ratio, gc-ratio, at/gc-ratio
   - [ ] hairpin detection
   - [ ] open reading frame detection
   - [x] cut site detection
 - annotation
-  - [ ] general sequence annotation
-  - [x] auto-annotate restriction sites
+  - [x] general sequence annotation
+  - [x] auto-annotate cut sites
 - visualization
-  - [ ] simple text-based output
-  - [ ] plasmid svg generation
+  - [x] simple text-based output
+  - [x] plasmid svg generation
 - import / export
   - [ ] fasta
   - [ ] fastq
   - [ ] sam
+  - [ ] svg
+    - [ ] linear
+    - [x] circular
   - [ ] custom?
 
 ### Examples

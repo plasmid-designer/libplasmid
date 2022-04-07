@@ -5,7 +5,10 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use crate::{prelude::RestrictionEnzymes, traits::*};
+use crate::{
+    prelude::{IupacNucleotide, RestrictionEnzymes},
+    traits::*,
+};
 
 use super::Annotation;
 
@@ -51,7 +54,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq = DnaSequence::new();
     /// seq.push_base(A);
@@ -69,7 +72,7 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq = DnaSequence::new();
     /// seq.push_base_str("AGT");
@@ -91,13 +94,13 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::{DnaCodon, DnaNucleotide::*}};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq = DnaSequence::new();
     /// let codon: DnaCodon = [A, G, T].into();
     /// seq.push_codon(&codon);
     ///
-    /// assert_eq!(seq.pop_codon(), Some([A, G, T].into()));
+    /// assert_eq!(seq.last_codon(), Some([A, G, T].into()));
     /// ```
     pub fn push_codon<T>(&mut self, codon: T)
     where
@@ -106,11 +109,11 @@ where
         self.sequence.extend(codon.borrow().to_triplet_arr())
     }
 
-    /// Remove the last nucleobase from the sequence and return it, or None if it is empty.
+    /// Remove the last nucleobase from the sequence and return it, or `None` if it is empty.
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::{DnaCodon, DnaNucleotide::*}};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq = DnaSequence::from_str("AGTCCT").unwrap();
     /// let base = seq.pop_base().unwrap();
@@ -121,47 +124,47 @@ where
         self.sequence.pop()
     }
 
-    /// Remove the last codon from the sequence and return it, or None if it is empty.
+    /// Return the last codon from the sequence, or `None` if there are none.
     /// The function will return the last proper codon in the sequence.
     ///
-    /// Use `#pop_codon_unsafe` if you need a codon from the last three nucleobases.
+    /// Use `#last_codon_unsafe` if you need a codon from the last three nucleobases.
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq1 = DnaSequence::from_str("AGTAA").unwrap();
-    /// let seq1_codon = seq1.pop_codon().unwrap(); // AGT
+    /// let seq1_codon = seq1.last_codon().unwrap(); // AGT
     ///
     /// assert_eq!(seq1_codon, [A, G, T].into());
     ///
     /// let mut seq2 = DnaSequence::from_str("AA").unwrap();
-    /// let seq2_codon = seq2.pop_codon(); // None
+    /// let seq2_codon = seq2.last_codon(); // None
     ///
     /// assert!(seq2_codon.is_none());
     /// ```
-    pub fn pop_codon(&mut self) -> Option<C> {
-        self.codons().last()
+    pub fn last_codon(&self) -> Option<C> {
+        self.codon_iter().last()
     }
 
-    /// Remove the last codon from the sequence and return it, or None if it is empty.
+    /// Return the last codon from the sequence, or `None` if there are none.
     /// This function will build a codon from the last nucleotide triplet.
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let mut seq1 = DnaSequence::from_str("AGTAA").unwrap();
-    /// let seq1_codon = seq1.pop_codon_unsafe().unwrap(); // TAA
+    /// let seq1_codon = seq1.last_codon_unsafe().unwrap(); // TAA
     ///
     /// assert_eq!(seq1_codon, [T, A, A].into());
     ///
     /// let mut seq2 = DnaSequence::from_str("AA").unwrap();
-    /// let seq2_codon = seq2.pop_codon_unsafe(); // None
+    /// let seq2_codon = seq2.last_codon_unsafe(); // None
     ///
     /// assert!(seq2_codon.is_none());
     /// ```
-    pub fn pop_codon_unsafe(&mut self) -> Option<C> {
+    pub fn last_codon_unsafe(&self) -> Option<C> {
         let seq: [B; 3] = self
             .sequence
             .iter()
@@ -179,14 +182,14 @@ where
     ///
     /// # Examples
     /// ```
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let seq = DnaSequence::from_str("TGATCC").unwrap();
-    /// let nucleotides = seq.nucleotides().map(|&x| x).collect::<Vec<_>>();
+    /// let nucleotides = seq.nucleotide_iter().map(|&x| x).collect::<Vec<_>>();
     ///
     /// assert_eq!(nucleotides, [T, G, A, T, C, C])
     /// ```
-    pub fn nucleotides(&self) -> std::slice::Iter<B> {
+    pub fn nucleotide_iter(&self) -> std::slice::Iter<B> {
         self.sequence.iter()
     }
 
@@ -194,24 +197,70 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::seq::DnaSequence;
+    /// use plasmid::prelude::*;
     ///
     /// let seq = DnaSequence::from_str("TGATCC").unwrap();
-    /// for codon in seq.codons() {
+    /// for codon in seq.codon_iter() {
     ///     println!("{:?}", codon);
     /// }
     /// ```
-    pub fn codons(&self) -> impl Iterator<Item = C> + '_ {
+    pub fn codon_iter(&self) -> impl Iterator<Item = C> + '_ {
         self.sequence
             .chunks_exact(3)
             .map(|chunk| C::from_triplet_arr(chunk.try_into().unwrap()))
+    }
+
+    /// An iterator over the IUPAC sequence.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use plasmid::prelude::{*, IupacNucleotide::*};
+    ///
+    /// let seq = DnaSequence::from_str("TGATCC").unwrap();
+    /// assert_eq!(&seq.iupac_iter().collect::<Vec<_>>(), &[T, G, A, T, C, C])
+    /// ```
+    pub fn iupac_iter(&self) -> impl Iterator<Item = IupacNucleotide> + '_ {
+        self.sequence.iter().map(|n| n.to_iupac())
+    }
+
+    /// An iterator over the associated annotations.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let mut seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// seq.as_mut_annotations().push(Annotation::new(0, 2, None, "Start Codon"));
+    /// assert_eq!(seq.annotation_iter().next().unwrap().text, "Start Codon");
+    /// ```
+    pub fn annotation_iter(&self) -> std::slice::Iter<Annotation> {
+        self.annotations.iter()
+    }
+
+    /// An iterator over the associated annotations.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let mut seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// let ann = Annotation::new(0, 2, None, "Start Codon");
+    /// seq.as_mut_annotations().push(ann);
+    /// assert_eq!(seq.annotation_iter().next().unwrap().text, "Start Codon");
+    /// ```
+    pub fn as_annotations(&self) -> &[Annotation] {
+        &self.annotations
+    }
+
+    pub fn as_mut_annotations(&mut self) -> &mut Vec<Annotation> {
+        &mut self.annotations
     }
 
     /// An iterator over the nucleotides of a genetic sequence.
     ///
     /// # Examples
     /// ```
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let seq = DnaSequence::from_str("TGATCC").unwrap();
     /// let nucleotides = seq.as_nucleotides();
@@ -226,7 +275,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let seq = DnaSequence::from_str("TGATCC").unwrap();
     /// let nucleotides = seq.as_reverse_complement();
@@ -244,16 +293,25 @@ where
     ///
     /// # Examples
     /// ```rust
-    /// use plasmid::{seq::DnaSequence, dna::DnaNucleotide::*};
+    /// use plasmid::prelude::{*, DnaNucleotide::*};
     ///
     /// let seq = DnaSequence::from_str("TGATCC").unwrap();
     ///
     /// assert_eq!(seq.as_codons(), [[T, G, A].into(), [T, C, C].into()])
     /// ```
     pub fn as_codons(&self) -> Vec<C> {
-        self.codons().collect()
+        self.codon_iter().collect()
     }
 
+    /// Return the nucleotide sequence as a string.
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// assert_eq!(seq.to_nucleotide_string(), "ATGTTC");
+    /// ```
     pub fn to_nucleotide_string(&self) -> String {
         self.as_nucleotides()
             .iter()
@@ -261,6 +319,15 @@ where
             .collect()
     }
 
+    /// Return the reverse complement of the nucleotide sequence as a string.
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// assert_eq!(seq.to_reverse_complement_string(), "TACAAG");
+    /// ```
     pub fn to_reverse_complement_string(&self) -> String {
         self.as_reverse_complement()
             .iter()
@@ -268,6 +335,105 @@ where
             .collect()
     }
 
+    /// Count guanine and cytosine nucleotides
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// assert_eq!(seq.gc_count(), 2);
+    /// ```
+    pub fn gc_count(&self) -> usize {
+        use IupacNucleotide::*;
+        let nucleotides = [G, C];
+        self.iupac_iter()
+            .filter(|n| nucleotides.contains(n))
+            .count()
+    }
+
+    /// Count adenine and thymine/uracil nucleotides
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// assert_eq!(seq.at_count(), 4);
+    /// ```
+    pub fn at_count(&self) -> usize {
+        use IupacNucleotide::*;
+        let nucleotides = [A, T];
+        self.iupac_iter()
+            .filter(|n| nucleotides.contains(n))
+            .count()
+    }
+
+    /// Compute guanine-cytosine ratio
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// let expected = 2_f32 / 6_f32;
+    /// assert!((seq.gc_ratio() - expected).abs() <= std::f32::EPSILON);
+    /// ```
+    pub fn gc_ratio(&self) -> f32 {
+        self.gc_count() as f32 / self.sequence.len() as f32
+    }
+
+    /// Compute adenine-thymine ratio
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// let expected = 4_f32 / 6_f32;
+    /// assert!((seq.at_ratio() - expected).abs() <= std::f32::EPSILON);
+    /// ```
+    pub fn at_ratio(&self) -> f32 {
+        self.at_count() as f32 / self.sequence.len() as f32
+    }
+
+    /// Compute adenine-thymine/uracil to guanine-cytosine ratio
+    ///
+    /// # Example
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let seq = DnaSequence::from_str("ATGTTC").unwrap();
+    /// let expected = 4_f32 / 2_f32;
+    /// assert!((seq.at_gc_ratio() - expected).abs() <= std::f32::EPSILON);
+    /// ```
+    pub fn at_gc_ratio(&self) -> f32 {
+        self.at_count() as f32 / self.gc_count() as f32
+    }
+
+    /// Annotate known restriction enzymes.
+    ///
+    /// The algorithm will iterate over the sequence multiple times
+    /// and try to find cut sites of known restriction enzymes.
+    ///
+    /// All detected cut sites will be annotated with their corresponding
+    /// start-, stop-, and cut-positions. The cut position will be stored
+    /// inside of the `needle` variable of the `Annotation`.
+    ///
+    /// This function is relatively slow, don't run it on every insertion/deletion.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use plasmid::prelude::*;
+    ///
+    /// let mut seq = DnaSequence::from_str("ATGTTCCATATGTCTCGT").unwrap();
+    /// seq.annotate_restriction_enzymes(); // should find NdeI: CA/TATG
+    /// let ann = seq.as_annotations().first().unwrap();
+    /// assert_eq!(ann.text, "NdeI");
+    /// assert_eq!(ann.start, 5);
+    /// assert_eq!(ann.needle, Some(7));
+    /// assert_eq!(ann.end, 11);
+    /// ```
     pub fn annotate_restriction_enzymes(&mut self) {
         let own_nucleotides = self.as_nucleotides();
         let mut annotations: Vec<Annotation> = Vec::new();
@@ -300,20 +466,6 @@ where
         }
         self.annotations.extend(annotations);
     }
-
-    // TODO: Find some way to do this
-    // pub fn codons(&self) -> (Vec<C>, Option<RnaPartialCodon>) {
-    //     let iter = self.sequence.chunks_exact(3);
-    //     let extra_bases = iter.remainder();
-    //     let codons = iter
-    //         .map(|chunk| RnaCodon(chunk[0], chunk[1], chunk[2]))
-    //         .collect::<Vec<_>>();
-    //     if extra_bases.len() == 0 {
-    //         (codons, None)
-    //     } else {
-    //         (codons, Some(RnaPartialCodon::from_slice(extra_bases)))
-    //     }
-    // }
 }
 
 impl<B, C> ToString for GeneticSequence<B, C>
