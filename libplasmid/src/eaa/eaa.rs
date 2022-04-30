@@ -5,6 +5,8 @@ use crate::traits::*;
 /// Essential Amino Acid
 #[derive(Debug, PartialEq, Eq)]
 pub enum Eaa {
+    /// Any
+    Any,
     /// Alanine
     Ala,
     /// Arginine
@@ -13,6 +15,8 @@ pub enum Eaa {
     Asn,
     /// Aspartic Acid
     Asp,
+    /// Aspartate or Asparagine
+    Asx,
     /// Cysteine
     Cys,
     /// Glutamine
@@ -47,32 +51,48 @@ pub enum Eaa {
     Tyr,
     /// Valine
     Val,
+    /// Gap of indeterminate length
+    Gap,
+}
+
+impl Eaa {
+    pub(crate) fn all_as_str() -> &'static str {
+        "-*ABCDEFGHIKLMNPQRSVWXY"
+    }
+
+    pub fn is_eaa(c: &char) -> bool {
+        Self::all_as_str().contains(*c)
+    }
 }
 
 impl TryFromLetter for Eaa {
     fn try_from_letter(letter: char) -> anyhow::Result<Self> {
         use self::Eaa::*;
         match letter.to_ascii_uppercase() {
+            '-' => Ok(Gap),
+            '*' => Ok(Ter),
             'A' => Ok(Ala),
-            'R' => Ok(Arg),
-            'N' => Ok(Asn),
-            'D' => Ok(Asp),
+            'B' => Ok(Asx),
             'C' => Ok(Cys),
-            'Q' => Ok(Gln),
+            'D' => Ok(Asp),
             'E' => Ok(Glu),
+            'F' => Ok(Phe),
             'G' => Ok(Gly),
             'H' => Ok(His),
             'I' => Ok(Ile),
-            'L' => Ok(Leu),
             'K' => Ok(Lys),
+            'L' => Ok(Leu),
             'M' => Ok(Met),
-            'F' => Ok(Phe),
+            'N' => Ok(Asn),
             'P' => Ok(Pro),
+            'Q' => Ok(Gln),
+            'R' => Ok(Arg),
             'S' => Ok(Ser),
-            '*' => Ok(Ter),
-            'W' => Ok(Trp),
-            'Y' => Ok(Tyr),
+            'T' => Ok(Thr),
             'V' => Ok(Val),
+            'W' => Ok(Trp),
+            'X' => Ok(Any),
+            'Y' => Ok(Tyr),
             _ => bail!(PlasmidError::InvalidAminoAcid { char: letter }),
         }
     }
@@ -83,10 +103,13 @@ impl ToLetter for Eaa {
         use self::Eaa::*;
         match self {
             Ala => 'A',
+            Any => 'X',
             Arg => 'R',
             Asn => 'N',
             Asp => 'D',
+            Asx => 'B',
             Cys => 'C',
+            Gap => '-',
             Gln => 'Q',
             Glu => 'E',
             Gly => 'G',
@@ -115,7 +138,9 @@ impl ToString for Eaa {
             Arg => "Arginine",
             Asn => "Asparagine",
             Asp => "Aspartic acid",
+            Asx => "Aspartate or Asparagine",
             Cys => "Cysteine",
+            Gap => "(gap)",
             Gln => "Glutamine",
             Glu => "Glutamic acid",
             Gly => "Glycine",
@@ -127,11 +152,12 @@ impl ToString for Eaa {
             Phe => "Phenylalanine",
             Pro => "Proline",
             Ser => "Serine",
-            Ter => "STOP",
+            Ter => "(stop)",
             Thr => "Threonine",
             Trp => "Tryptophan",
             Tyr => "Tyrosine",
             Val => "Valine",
+            Any => "(any)",
         }
         .to_string()
     }

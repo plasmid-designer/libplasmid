@@ -8,12 +8,12 @@ pub enum PlasmidNucleotideType {
 }
 
 impl PlasmidNucleotideType {
-    fn allowed_letters(&self) -> String {
+    fn allowed_letters(&self) -> &'static str {
         use self::PlasmidNucleotideType::*;
         match self {
-            DNA => DnaNucleotide::all_as_string(),
-            RNA => RnaNucleotide::all_as_string(),
-            IUPAC => IupacNucleotide::all_as_string(),
+            DNA => DnaNucleotide::all_as_str(),
+            RNA => RnaNucleotide::all_as_str(),
+            IUPAC => IupacNucleotide::all_as_str(),
         }
     }
 }

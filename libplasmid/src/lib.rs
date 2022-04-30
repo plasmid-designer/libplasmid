@@ -9,6 +9,7 @@ pub mod err;
 pub mod traits;
 pub mod dna;
 pub mod eaa;
+pub mod imp;
 pub mod exp;
 pub mod prelude;
 pub mod rna;

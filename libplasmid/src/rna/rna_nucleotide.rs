@@ -20,8 +20,8 @@ pub enum RnaNucleotide {
 }
 
 impl RnaNucleotide {
-    pub(crate) fn all_as_string() -> String {
-        "ACGUΨ".to_string()
+    pub(crate) fn all_as_str() -> &'static str {
+        "ACGUΨ"
     }
 
     pub(crate) fn nucleotide_type() -> PlasmidNucleotideType {

@@ -63,12 +63,16 @@ impl IupacNucleotide {
         }
     }
 
-    pub(crate) fn all_as_string() -> String {
-        "ACGTWSMKRYBVDHN-".to_string()
+    pub(crate) fn all_as_str() -> &'static str {
+        "ACGTWSMKRYBVDHN-"
     }
 
     pub(crate) fn nucleotide_type() -> PlasmidNucleotideType {
         PlasmidNucleotideType::IUPAC
+    }
+
+    pub(crate) fn is_iupac(c: &char) -> bool {
+        Self::all_as_str().contains(*c)
     }
 }
 
