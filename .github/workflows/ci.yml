@@ -51,6 +51,8 @@ jobs:
           override: true
       - name: Install dependencies
         run: sudo apt update && sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev librsvg2-dev
+      - name: Create build directory
+        run: mkdir ./plasmid-gui/build
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         with:
