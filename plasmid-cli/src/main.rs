@@ -99,7 +99,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match args.command {
         // Pretty Print
         Commands::pp { sequence, strand } => {
-            let strand = strand.unwrap_or_else(|| Strand::Watson);
+            let strand = strand.unwrap_or(Strand::Watson);
             let seq = DnaSequence::from_str(sequence)?;
             let nucleotides = seq.to_nucleotide_string();
             let antinucleotides = seq.to_reverse_complement_string();
@@ -121,7 +121,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             pattern,
             strand,
         } => {
-            let strand = strand.unwrap_or_else(|| Strand::Watson);
+            let strand = strand.unwrap_or(Strand::Watson);
             let seq = DnaSequence::from_str(sequence)?;
             let iupac_seq = pattern
                 .chars()

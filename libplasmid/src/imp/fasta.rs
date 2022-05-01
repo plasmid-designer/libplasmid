@@ -1,5 +1,9 @@
 use super::Import;
-use crate::{uni::IupacNucleotide, prelude::{Eaa, DnaNucleotide, RnaNucleotide}, traits::TryFromLetter};
+use crate::{
+    prelude::{DnaNucleotide, Eaa, RnaNucleotide},
+    traits::TryFromLetter,
+    uni::IupacNucleotide,
+};
 
 pub struct FastaFile {
     pub description: String,
@@ -21,7 +25,7 @@ impl Import for FastaFile {
     type Output = Self;
 
     /// Import a FASTA file from a string.
-    /// 
+    ///
     /// # Example
     /// ```rust
     /// use plasmid::prelude::*;
@@ -29,16 +33,19 @@ impl Import for FastaFile {
     /// assert_eq!(fasta.description, "test sequence");
     /// assert_eq!(fasta.sequence, "ATGAACGCGTCC");
     /// ```
-    fn import<S>(s: S) -> anyhow::Result<Self::Output> where S: AsRef<str> {
-        let mut lines = s.as_ref().lines();
+    fn import<S>(s: S) -> anyhow::Result<Self::Output>
+    where
+        S: AsRef<str>,
+    {
+        let lines = s.as_ref().lines();
         let mut description = String::new();
         let mut sequence = String::new();
-        while let Some(line) = lines.next() {
-            if line.starts_with('>') {
+        for line in lines {
+            if let Some(stripped) = line.strip_prefix('>') {
                 if !description.is_empty() {
                     bail!("Invalid FASTA file: multiple sequences found")
                 }
-                description = line[1..].to_string();
+                description = stripped.to_string();
             } else {
                 sequence.push_str(line);
             }
@@ -50,11 +57,14 @@ impl Import for FastaFile {
     }
 }
 
-impl<Item> Import for TypedFastaFile<Item> where Item: TryFromLetter {
+impl<Item> Import for TypedFastaFile<Item>
+where
+    Item: TryFromLetter,
+{
     type Output = Self;
 
     /// Import a FASTA file from a string.
-    /// 
+    ///
     /// # Example
     /// ```rust
     /// use plasmid::prelude::{*, IupacNucleotide::*};
@@ -62,18 +72,25 @@ impl<Item> Import for TypedFastaFile<Item> where Item: TryFromLetter {
     /// assert_eq!(fasta.description, "test sequence");
     /// assert_eq!(fasta.sequence, [A, T, G, A, A, C, G, C, G, T, N, N]);
     /// ```
-    fn import<S>(s: S) -> anyhow::Result<Self::Output> where S: AsRef<str> {
+    fn import<S>(s: S) -> anyhow::Result<Self::Output>
+    where
+        S: AsRef<str>,
+    {
         let fasta = FastaFile::import(s)?;
         let sequence = fasta.as_sequence::<Item>()?;
         let description = fasta.description;
         Ok(TypedFastaFile {
-            description, sequence
+            description,
+            sequence,
         })
     }
 }
 
 impl FastaFile {
-    fn as_sequence<S>(&self) -> anyhow::Result<Vec<S>> where S: TryFromLetter {
+    fn as_sequence<S>(&self) -> anyhow::Result<Vec<S>>
+    where
+        S: TryFromLetter,
+    {
         let mut sequence = Vec::with_capacity(self.sequence.len());
         for char in self.sequence.chars() {
             sequence.push(TryFromLetter::try_from_letter(char)?);
@@ -102,23 +119,32 @@ impl FastaFile {
     }
 
     pub fn is_iupac_sequence(&self) -> bool {
-        self.sequence.chars().all(|c| IupacNucleotide::all_as_str().contains(c))
+        self.sequence
+            .chars()
+            .all(|c| IupacNucleotide::all_as_str().contains(c))
     }
 
     pub fn is_dna_sequence(&self) -> bool {
-        self.sequence.chars().all(|c| DnaNucleotide::all_as_str().contains(c))
+        self.sequence
+            .chars()
+            .all(|c| DnaNucleotide::all_as_str().contains(c))
     }
 
     pub fn is_rna_sequence(&self) -> bool {
-        self.sequence.chars().all(|c| RnaNucleotide::all_as_str().contains(c))
+        self.sequence
+            .chars()
+            .all(|c| RnaNucleotide::all_as_str().contains(c))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{prelude::{IupacNucleotide, DnaNucleotide, RnaNucleotide, Eaa}, imp::FastaEaaFile};
+    use crate::{
+        imp::FastaEaaFile,
+        prelude::{DnaNucleotide, Eaa, IupacNucleotide, RnaNucleotide},
+    };
 
-    use super::{Import, FastaFile, TypedFastaFile};
+    use super::{FastaFile, Import, TypedFastaFile};
 
     #[test]
     fn test_fasta_import_valid() -> anyhow::Result<()> {
@@ -178,14 +204,20 @@ mod tests {
 
     #[test]
     fn test_typed_fasta_file_import_complex_peptide_sequence_valid() -> anyhow::Result<()> {
-        let fasta = FastaEaaFile::import(r#"
+        let fasta = FastaEaaFile::import(
+            r#"
 >gi|186681228|ref|YP_001864424.1| phycoerythrobilin:ferredoxin oxidoreductase
 MNSERSDVTLYQPFLDYAIAYMRSRLDLEPYPIPTGFESNSAVVGKGKNQEEVVTTSYAFQTAKLRQIRA
 AHVQGGNSLQVLNFVIFPHLNYDLPFFGADLVTLPGGHLIALDMQPLFRDDSAYQAKYTEPILPIFHAHQ
 QHLSWGGDFPEEAQPFFSPAFLWTRPQETAVVETQVFAAFKDYLKAYLDFVEQAEAVTDSQNLVAIKQAQ
 LRYLRYRAEKDPARGMFKRFYGAEWTEEYIHGFLFDLERKLTVVK
-        "#.trim())?;
-        assert_eq!(fasta.description, "gi|186681228|ref|YP_001864424.1| phycoerythrobilin:ferredoxin oxidoreductase");
+        "#
+            .trim(),
+        )?;
+        assert_eq!(
+            fasta.description,
+            "gi|186681228|ref|YP_001864424.1| phycoerythrobilin:ferredoxin oxidoreductase"
+        );
         Ok(())
     }
 }

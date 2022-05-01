@@ -1,13 +1,18 @@
 #![cfg_attr(
-  all(not(debug_assertions), target_os = "windows"),
-  windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
 fn main() {
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![calculate_sequence_data, sequence_to_triplet_chunks, codon_to_peptide, codon_to_complement])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+        .invoke_handler(tauri::generate_handler![
+            calculate_sequence_data,
+            sequence_to_triplet_chunks,
+            codon_to_peptide,
+            codon_to_complement
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
 
 #[derive(serde::Serialize)]
@@ -43,13 +48,12 @@ fn sequence_to_triplet_chunks(sequence: Vec<String>) -> Vec<String> {
     chunks
 }
 
-
 #[tauri::command]
 fn codon_to_peptide(codon: String) -> String {
     use plasmid::prelude::*;
     use plasmid::traits::{ToLetter, TryFromStr};
     if let Ok(codon) = DnaCodon::try_from_str(&codon) {
-        Eaa::from(codon.translate()).to_letter().to_string()
+        codon.translate().to_letter().to_string()
     } else {
         String::new()
     }

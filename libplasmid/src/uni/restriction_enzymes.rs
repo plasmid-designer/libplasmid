@@ -27,8 +27,8 @@ impl RestrictionEnzyme {
     ) -> Self {
         Self {
             name: name.to_string(),
-            before: Vec::from_iter(before.iter().map(|&n| n)),
-            after: Vec::from_iter(after.iter().map(|&n| n)),
+            before: Vec::from_iter(before.iter().copied()),
+            after: Vec::from_iter(after.iter().copied()),
             mode,
         }
     }

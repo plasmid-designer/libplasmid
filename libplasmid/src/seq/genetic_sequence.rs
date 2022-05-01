@@ -45,6 +45,16 @@ where
     }
 }
 
+impl<B, C> Default for GeneticSequence<B, C>
+where
+    B: Nucleotide + TryFromLetter + ToLetter + ToIupac + Copy,
+    C: Codon<B>,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<B, C> GeneticSequence<B, C>
 where
     B: Nucleotide + TryFromLetter + ToLetter + ToIupac + Copy,
