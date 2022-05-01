@@ -50,7 +50,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Install dependencies
-        run: sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev librsvg2-dev
+        run: sudo apt update && sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libappindicator3-dev librsvg2-dev
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         with:
