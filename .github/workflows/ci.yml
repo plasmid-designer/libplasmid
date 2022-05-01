@@ -18,7 +18,8 @@ jobs:
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         with:
-          command: test -p plasmid
+          command: test
+          args: -p plasmid
   test_cli:
     name: Test Plasmid CLI
     runs-on: ubuntu-latest
@@ -34,7 +35,8 @@ jobs:
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         with:
-          command: test -p plasmid-cli
+          command: test
+          args: -p plasmid-cli
   test_desktop:
     name: Test Plasmid Desktop
     runs-on: ubuntu-latest
@@ -52,4 +54,5 @@ jobs:
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         with:
-          command: test -p app
+          command: test
+          args: -p app
