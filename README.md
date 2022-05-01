@@ -94,3 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   println!("{}", svg.export()); // print svg code
 }
 ```
+
+### GUI
+
+![Plasmid Desktop Screenshot](./gui.png)
