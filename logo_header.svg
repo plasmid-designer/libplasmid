@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="275"
+   height="100"
+   viewBox="0 0 72.760413 26.458336"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
+   sodipodi:docname="logo_header.svg"
+   inkscape:export-filename="C:\Users\Split\Documents\git\plasmid\plasmid-gui\src\logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect2842"
+       is_visible="true"
+       lpeversion="1"
+       pattern="M 0,5 C 0,2.24 2.24,0 5,0 7.76,0 10,2.24 10,5 10,7.76 7.76,10 5,10 2.24,10 0,7.76 0,5 Z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       hide_knot="false"
+       fuse_tolerance="0" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="451.25582"
+     inkscape:cy="131.59137"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g868"
+       transform="translate(1.8640518)">
+      <g
+         id="g854"
+         transform="matrix(0.16788398,0,0,0.16788398,1.0683524,1.82759)">
+        <circle
+           style="fill:none;stroke:#000000;stroke-width:2.64583;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+           id="path2740"
+           cx="67.752823"
+           cy="67.752823"
+           r="64.1698" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#d72323;stroke-width:5.29167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 13.229841,33.943229 C 40.402243,-6.7708287 86.149878,3.5635934 97.018839,10.690781"
+           id="path2742"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#2cce9c;stroke-width:5.29167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 125.5481,39.273759 c 16.30872,38.777976 -2.74252,73.202231 -25.51256,83.923931"
+           id="path2742-6"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#2c6ece;stroke-width:5.29167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 67.641833,131.8135 C 31.096513,131.11489 11.3957,102.91357 7.9666799,90.376692"
+           id="path2742-6-1"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.170838px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           d="m 123.05081,40.257045 c 0,0 1.05845,-0.403963 2.25287,-1.247727 1.53686,-0.217351 2.70013,-0.802326 2.70013,-0.802326 l -0.76113,5.632107 z"
+           id="path2810"
+           sodipodi:nodetypes="ccccc"
+           inkscape:transform-center-x="0.16089553"
+           inkscape:transform-center-y="0.80231866" />
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="27.592258"
+         y="17.169481"
+         id="text858"><tspan
+           sodipodi:role="line"
+           id="tspan856"
+           x="27.592258"
+           y="17.169481"
+           style="stroke-width:0.264583">Plasmid</tspan></text>
+    </g>
+  </g>
+</svg>

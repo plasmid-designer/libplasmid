@@ -1,11 +1,11 @@
-# plasmid
-> Rust Genetic Engineering Toolkit
+![Plasmid Logo](./logo_header.svg)
 
 Plasmid is a genetics / bioinformatics library.<br>
 
-It consists of two parts:
+It consists of three parts:
 - `libplasmid`: Library for genetic code creation, editing and analysis
 - `plasmid-cli`: CLI for genetic sequence processing
+- `plasmid-gui`: Desktop GUI using Tauri
 
 This is a work-in-progress.
 
