@@ -7,9 +7,16 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@yapv/core": "^0.2.2",
+    "@yapv/svg": "^0.2.2",
+    "lodash": "^4.17.21",
+    "modern-css-reset": "^1.4.0",
+    "open-vector-editor": "^17.4.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
+    "recoil": "^0.7.2",
+    "styled-components": "^5.3.5",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
@@ -39,6 +46,13 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.0.0-rc.9",
+    "babel-plugin-styled-components": "^2.0.7",
     "cross-env": "^7.0.3"
-  }
+  },
+  "resolutions": {
+    "styled-components": "^5"
+  },
+  "plugins": [
+    "babel-plugin-styled-components"
+  ]
 }
