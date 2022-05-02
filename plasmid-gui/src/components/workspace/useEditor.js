@@ -24,7 +24,6 @@ const iupacChars = "ACGTWSMKRYBVDHN-"
 
 const useEditor = () => {
     const [data, setData] = useState(new SequenceDataModel())
-
     const [, setSequence] = useRecoilState(sequenceState)
 
     const handleKeyDown = async e => {

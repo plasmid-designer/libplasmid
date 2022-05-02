@@ -30,13 +30,6 @@ export class SequenceDataItemModel {
     startIndex() {
         return this.data.start_index
     }
-
-    /**
-     * @returns {number}
-     */
-    endIndex() {
-        return this.data.end_index
-    }
 }
 
 export default class SequenceDataModel {
@@ -79,7 +72,8 @@ export default class SequenceDataModel {
      */
     isItemSelected(item) {
         const cursorPos = this.cursorPosition()
-        return cursorPos >= item.startIndex() && cursorPos < item.endIndex()
+        const startIndex = item.startIndex()
+        return cursorPos >= startIndex && cursorPos < startIndex + item.codonLetters().length
     }
 
     /**
