@@ -36,7 +36,11 @@ impl SequenceState {
     }
 
     pub fn insert_all(&mut self, text: String) {
-        if let Ok(nucleotides) = text.chars().map(|c| IupacNucleotide::try_from_letter(c)).collect::<Result<Vec<_>, _>>() {
+        if let Ok(nucleotides) = text
+            .chars()
+            .map(|c| IupacNucleotide::try_from_letter(c))
+            .collect::<Result<Vec<_>, _>>()
+        {
             for nucleotide in nucleotides {
                 self.inner_insert_nucleotide(nucleotide);
             }
@@ -46,12 +50,8 @@ impl SequenceState {
     pub fn delete(&mut self) {
         match self.cursor_pos {
             0 => (),
-            i if i == self.sequence.len() => {
-                _ = self.sequence.pop_back()
-            }
-            i => {
-                _ = self.sequence.remove(i)
-            }
+            i if i == self.sequence.len() => _ = self.sequence.pop_back(),
+            i => _ = self.sequence.remove(i),
         }
         self.move_cursor(CursorMovement::By(-1))
     }
@@ -62,27 +62,31 @@ impl SequenceState {
                 if index <= self.sequence.len() {
                     self.cursor_pos = index;
                 }
-            },
+            }
             CursorMovement::By(distance) => {
                 if distance.is_negative() {
                     self.cursor_pos = self.cursor_pos.saturating_sub(distance.abs() as usize);
                 } else {
                     self.cursor_pos = self.cursor_pos.saturating_add(distance as usize);
                 }
-            },
+            }
             CursorMovement::Start => {
                 self.cursor_pos = 0;
-            },
+            }
             CursorMovement::End => {
                 self.cursor_pos = self.sequence.len();
-            },
+            }
             CursorMovement::CodonStart => {
-                let distance = if self.cursor_pos % 3 == 0 { 3 } else { self.cursor_pos % 3 };
+                let distance = if self.cursor_pos % 3 == 0 {
+                    3
+                } else {
+                    self.cursor_pos % 3
+                };
                 self.cursor_pos = self.cursor_pos.saturating_sub(distance);
-            },
+            }
             CursorMovement::CodonEnd => {
                 self.cursor_pos = self.cursor_pos.saturating_add(3 - self.cursor_pos % 3);
-            },
+            }
         }
     }
 
