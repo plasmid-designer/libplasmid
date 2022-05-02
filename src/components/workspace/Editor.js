@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { memo, useRef, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { compact } from 'lodash'
 import styled from 'styled-components'
@@ -9,11 +9,15 @@ import EditorToolbar from './EditorToolbar'
 import ColorUtil from '../../util/ColorUtil'
 import { editorHintState } from '../../state/atoms'
 
+/**
+ * @param {{
+ *    item: import('./SequenceDataModel').SequenceDataItemModel,
+ *    selection: import('./SequenceDataModel').SequenceDataSelectionModel,
+ * }} props
+ */
 const SequenceItem = ({
-    codon = null,
-    anticodon = null,
-    peptide = null,
-    codonIndex = 0,
+    item,
+    selection,
     cursorIndex = 0,
     renderCursor = false,
     isStart = false,
@@ -28,20 +32,21 @@ const SequenceItem = ({
         isStart ? 'sequence__item--start-marker' : null,
         isEnd ? 'sequence__item--end-marker' : null,
     ]).join(' ')
-    const key = `${isStart ? 'start;' : ''}${isEnd ? 'end;' : ''}${codonIndex}`
-    const index = forceIndex ?? (isStart ? 0 : codonIndex)
+    const key = `${isStart ? 'start;' : ''}${isEnd ? 'end;' : ''}${item?.startIndex}`
+    const index = forceIndex ?? (isStart ? 0 : item?.startIndex)
     return (
         <div data-index={index} className={className} key={key} data-selected={editorHints.highlightCurrentCodon ? selected : false}>
             <div className="sequence__item__codon">
                 {isStart && <>5'</>}
                 {isEnd && <>3'</>}
-                {codon && codon.map((nucleotide, nucIndex) => (
+                {item && item.codonLetters.map((nucleotide, nucIndex) => (
                     <div
-                        data-index={codonIndex + nucIndex}
+                        data-index={item.startIndex + nucIndex}
                         key={nucIndex}
                         className="sequence__item__codon__nucleotide_wrapper"
+                        data-user-selected={selection.contains(item.startIndex + nucIndex)}
                     >
-                        {cursorIndex === codonIndex + nucIndex && renderCursor && (
+                        {cursorIndex === item.startIndex + nucIndex && renderCursor && (
                             <>&#8203;<div className="cursor">|</div></>
                         )}
                         <span style={{color: ColorUtil.getNucleotideColor(nucleotide)}}>{nucleotide}</span>
@@ -57,13 +62,14 @@ const SequenceItem = ({
                 <div className="sequence__item__codon sequence__item__codon--anticodon">
                     {isStart && <>3'</>}
                     {isEnd && <>5'</>}
-                    {anticodon && anticodon.map((nucleotide, nucIndex) => (
+                    {item && item.anticodonLetters.map((nucleotide, nucIndex) => (
                         <div
-                            data-index={codonIndex + nucIndex}
+                            data-index={item.startIndex + nucIndex}
                             key={nucIndex}
                             className="sequence__item__codon__nucleotide_wrapper"
+                            data-user-selected={selection.contains(item.startIndex + nucIndex)}
                         >
-                            {cursorIndex === codonIndex + nucIndex && renderCursor && (
+                            {cursorIndex === item.startIndex + nucIndex && renderCursor && (
                                 <>&#8203;<div className="cursor">|</div></>
                             )}
                             <span style={{color: ColorUtil.getNucleotideColor(nucleotide)}}>{nucleotide}</span>
@@ -78,12 +84,12 @@ const SequenceItem = ({
             )}
             { !onlyCursor && editorHints.showCodonNumbers && (
                 <div className="sequence__item__peptide_index">
-                    {codon && codon.length > 0 && <>{codonIndex + 1}</>}
+                    {item.codonLetters && item.codonLetters.length > 0 && <>{item.startIndex + 1}</>}
                 </div>
             )}
             { !onlyCursor && editorHints.showPeptides && (
                 <div className="sequence__item__peptide">
-                    {peptide && <span style={{backgroundColor: ColorUtil.getPeptideColor(peptide)}}>{peptide}</span>}
+                    {item.peptideLetter && <span style={{backgroundColor: ColorUtil.getPeptideColor(item.peptideLetter)}}>{item.peptideLetter}</span>}
                 </div>
             )}
         </div>
@@ -95,10 +101,14 @@ const Editor = ({ className }) => {
     const [renderCursor, setRenderCursor] = useState(false)
 
     const {
-        data,
+        cursor,
+        sequence,
+        selection,
         handlers: {
             handleKeyDown,
             handleMouseDown,
+            handleMouseMove,
+            handleMouseUp,
         }
     } = useEditor()
 
@@ -119,6 +129,8 @@ const Editor = ({ className }) => {
                 className="editor"
                 onKeyDown={handleKeyDown}
                 onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
                 onFocus={handleFocusChange(true)}
                 onClick={handleFocusChange(true, true)}
                 onBlur={handleFocusChange(false)}
@@ -126,18 +138,16 @@ const Editor = ({ className }) => {
             >
                 <div className="sequence">
                     {/* <SequenceItem isStart /> */}
-                    {data.items().map(item => (
+                    {sequence.items.map(item => (
                         <SequenceItem
-                            codon={item.codonLetters()}
-                            anticodon={item.anticodonLetters()}
-                            peptide={item.peptideLetter()}
-                            codonIndex={item.startIndex()}
-                            cursorIndex={data.cursorPosition()}
+                            item={item}
+                            selection={selection}
+                            cursorIndex={cursor.cursorPosition}
                             renderCursor={renderCursor}
-                            selected={renderCursor && data.isItemSelected(item)}
+                            selected={renderCursor && cursor.isItemSelected(item)}
                         />
                     ))}
-                    {data.isCursorAtEnd() && <SequenceItem onlyCursor forceIndex={data.bpCount()} renderCursor={renderCursor} />}
+                    {cursor.isCursorAtEnd() && <SequenceItem onlyCursor forceIndex={sequence.bpCount} renderCursor={renderCursor} />}
                     {/* <SequenceItem isEnd forceIndex={cursorEndIndex} /> */}
                 </div>
             </div>
@@ -190,6 +200,10 @@ export default styled(Editor)`
                 &__nucleotide_wrapper {
                     display: flex;
                     position: relative;
+
+                    &[data-user-selected=true] {
+                        background: hsla(327, 20%, 67%, 0.5);
+                    }
                 }
             }
 
