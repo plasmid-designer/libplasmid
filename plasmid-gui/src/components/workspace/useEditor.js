@@ -1,90 +1,90 @@
 import { useState, useEffect, useCallback } from 'react'
-
-import { invoke } from '@tauri-apps/api/tauri'
 import { useRecoilState } from 'recoil'
+import { invoke } from '@tauri-apps/api/tauri'
+
 import { sequenceState } from '../../state/atoms'
 
+import SequenceDataModel from './SequenceDataModel'
+
 const Bridge = {
-    calculateSequenceData: sequence => invoke('calculate_sequence_data', { sequence }),
+    calculateSequenceData: () => invoke('calculate_sequence_data'),
+    insert: letter => invoke('sequence_insert', { letter }),
+    insertAll: text => invoke('sequence_insert_all', { text }),
+    delete: () => invoke('sequence_delete'),
+    moveCursorTo: index => invoke('move_cursor', { index }),
+    moveCursorLeft: () => invoke('move_cursor_left'),
+    moveCursorRight: () => invoke('move_cursor_right'),
+    moveCursorToCodonStart: () => invoke('move_cursor_to_codon_start'),
+    moveCursorToCodonEnd: () => invoke('move_cursor_to_codon_end'),
+    moveCursorToStart: () => invoke('move_cursor_to_start'),
+    moveCursorToEnd: () => invoke('move_cursor_to_end'),
 }
 
 const iupacChars = "ACGTWSMKRYBVDHN-"
 
 const useEditor = () => {
-    const [cursorIndex, setCursorIndex] = useState(0)
-    const [sequence, setSequence] = useRecoilState(sequenceState)
-    const [finalSequence, setFinalSequence] = useState([])
+    const [data, setData] = useState(new SequenceDataModel())
 
-    const handleKeyDown = useCallback(async e => {
+    const [, setSequence] = useRecoilState(sequenceState)
+
+    const handleKeyDown = async e => {
+        e.preventDefault()
         const upperKey = e.key.toUpperCase()
         const ctrl = e.ctrlKey
         switch (e.code) {
             case 'Backspace':
             case 'Delete':
-                if (cursorIndex === 0) return
-                if (cursorIndex === sequence.length) {
-                    setSequence(sequence.slice(0, -1))
-                    setCursorIndex(index => index - 1)
-                } else {
-                    setSequence(seq => [...seq.slice(0, cursorIndex - 1), ...seq.slice(cursorIndex)])
-                    setCursorIndex(index => index - 1)
-                }
+                await Bridge.delete()
                 break;
             case 'ArrowLeft':
-                if (ctrl) setCursorIndex(index => Math.max(0, index - (index % 3 === 0 ? 3 : index % 3)))
-                else setCursorIndex(index => Math.max(0, index - 1))
+                if (ctrl) await Bridge.moveCursorToCodonStart()
+                else await Bridge.moveCursorLeft()
                 break;
             case 'ArrowRight':
-                if (ctrl) setCursorIndex(index => Math.min(index + (3 - index % 3), sequence.length))
-                else setCursorIndex(index => Math.min(index + 1, sequence.length))
+                if (ctrl) await Bridge.moveCursorToCodonEnd()
+                else await Bridge.moveCursorRight()
                 break;
             default:
-                if (ctrl && ['v', 'V'].includes(e.key)) {
+                if (ctrl && upperKey === 'V') {
                     const text = await navigator.clipboard.readText()
-                    const nucleotides = [...text].filter(char => iupacChars.includes(char))
-                    setSequence(seq => [...seq.slice(0, cursorIndex), ...nucleotides, ...seq.slice(cursorIndex)])
-                    setCursorIndex(index => index + nucleotides.length)
+                    await Bridge.insertAll(text)
                     return
                 }
                 if (iupacChars.includes(upperKey)) {
-                    if (cursorIndex === sequence.length - 1) {
-                        setSequence(seq => [...seq, upperKey])
-                    } else {
-                        setSequence(seq => [...seq.slice(0, cursorIndex), upperKey, ...seq.slice(cursorIndex)])
-                    }
-                    setCursorIndex(index => index + 1)
+                    await Bridge.insert(upperKey)
                 }
         }
-    }, [cursorIndex, sequence, setSequence])
+    }
 
-    const handleMouseDown = useCallback(e => {
+    const handleMouseDown = async e => {
+        e.preventDefault()
         const findIndex = (currentTarget, depth = 0) => {
             if (depth === 3) return null
             if (currentTarget.dataset.index) return parseInt(currentTarget.dataset.index)
             return findIndex(currentTarget.parentElement, depth + 1)
         }
         const index = findIndex(e.target)
-        if (index !== null) setCursorIndex(index)
-        else setCursorIndex(sequence.length)
-    }, [sequence.length])
+        if (index !== null) await Bridge.moveCursorTo(index)
+        else await Bridge.moveCursorToEnd()
+    }
 
-    useEffect(() => {
-        const calculateSequence = async () => {
-            setFinalSequence(await Bridge.calculateSequenceData(sequence))
-        }
-        calculateSequence()
-    }, [sequence])
+    const updateSequence = async () => {
+        const data = await Bridge.calculateSequenceData()
+        const model = new SequenceDataModel(data)
+        setData(model)
+        setSequence(model.nucleotideSequence())
+    }
+
+    const wrapUpdatingAsync = fn => async (...data) => {
+        await fn(...data)
+        await updateSequence()
+    }
 
     return {
-        data: {
-            sequence: finalSequence,
-            cursorIndex,
-            cursorEndIndex: sequence.length,
-            cursorAtEnd: cursorIndex === sequence.length,
-        },
+        data,
         handlers: {
-            handleKeyDown,
-            handleMouseDown,
+            handleKeyDown: wrapUpdatingAsync(handleKeyDown),
+            handleMouseDown: wrapUpdatingAsync(handleMouseDown),
         }
     }
 }

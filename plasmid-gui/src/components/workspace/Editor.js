@@ -29,19 +29,19 @@ const SequenceItem = ({
         isEnd ? 'sequence__item--end-marker' : null,
     ]).join(' ')
     const key = `${isStart ? 'start;' : ''}${isEnd ? 'end;' : ''}${codon}${codonIndex}`
-    const index = forceIndex ?? (isStart ? 0 : codonIndex * 3)
+    const index = forceIndex ?? (isStart ? 0 : codonIndex)
     return (
         <div data-index={index} className={className} key={key} data-selected={editorHints.highlightCurrentCodon ? selected : false}>
             <div className="sequence__item__codon">
                 {isStart && <>5'</>}
                 {isEnd && <>3'</>}
-                {codon && [...codon].map((nucleotide, nucIndex) => (
+                {codon && codon.map((nucleotide, nucIndex) => (
                     <div
-                        data-index={codonIndex * 3 + nucIndex}
+                        data-index={codonIndex + nucIndex}
                         key={`codon;${codonIndex}${nucIndex}`}
                         className="sequence__item__codon__nucleotide_wrapper"
                     >
-                        {cursorIndex === codonIndex * 3 + nucIndex && renderCursor && (
+                        {cursorIndex === codonIndex + nucIndex && renderCursor && (
                             <>&#8203;<div className="cursor">|</div></>
                         )}
                         <span style={{color: ColorUtil.getNucleotideColor(nucleotide)}}>{nucleotide}</span>
@@ -57,13 +57,13 @@ const SequenceItem = ({
                 <div className="sequence__item__codon sequence__item__codon--anticodon">
                     {isStart && <>3'</>}
                     {isEnd && <>5'</>}
-                    {anticodon && [...anticodon].map((nucleotide, nucIndex) => (
+                    {anticodon && anticodon.map((nucleotide, nucIndex) => (
                         <div
-                            data-index={codonIndex * 3 + nucIndex}
+                            data-index={codonIndex + nucIndex}
                             key={`anticodon;${codonIndex}${nucIndex}`}
                             className="sequence__item__codon__nucleotide_wrapper"
                         >
-                            {cursorIndex === codonIndex * 3 + nucIndex && renderCursor && (
+                            {cursorIndex === codonIndex + nucIndex && renderCursor && (
                                 <>&#8203;<div className="cursor">|</div></>
                             )}
                             <span style={{color: ColorUtil.getNucleotideColor(nucleotide)}}>{nucleotide}</span>
@@ -95,12 +95,7 @@ const Editor = ({ className }) => {
     const [renderCursor, setRenderCursor] = useState(false)
 
     const {
-        data: {
-            sequence,
-            cursorIndex,
-            cursorEndIndex,
-            cursorAtEnd,
-        },
+        data,
         handlers: {
             handleKeyDown,
             handleMouseDown,
@@ -108,10 +103,13 @@ const Editor = ({ className }) => {
     } = useEditor()
 
     useEffect(() => {
-        editorRef.current.focus()
+        editorRef.current?.focus()
     }, [])
 
-    const handleFocusChange = isFocused => () => setRenderCursor(isFocused);
+    const handleFocusChange = (showCursor, refocus = false) => () => {
+        setRenderCursor(showCursor)
+        if (refocus) { editorRef.current?.focus() }
+    }
 
     return (
         <div className={className}>
@@ -122,23 +120,24 @@ const Editor = ({ className }) => {
                 onKeyDown={handleKeyDown}
                 onMouseDown={handleMouseDown}
                 onFocus={handleFocusChange(true)}
+                onClick={handleFocusChange(true, true)}
                 onBlur={handleFocusChange(false)}
                 tabIndex={0}
             >
                 <div className="sequence">
                     {/* <SequenceItem isStart /> */}
-                    {sequence.map(({ codon, anticodon, peptide, startIndex, endIndex }, codonIndex) => (
+                    {data.items().map(item => (
                         <SequenceItem
-                            codon={codon}
-                            anticodon={anticodon}
-                            peptide={peptide}
-                            codonIndex={codonIndex}
-                            cursorIndex={cursorIndex}
+                            codon={item.codonLetters()}
+                            anticodon={item.anticodonLetters()}
+                            peptide={item.peptideLetter()}
+                            codonIndex={item.startIndex()}
+                            cursorIndex={data.cursorPosition()}
                             renderCursor={renderCursor}
-                            selected={cursorIndex >= startIndex && cursorIndex < endIndex}
+                            selected={renderCursor && data.isItemSelected(item)}
                         />
                     ))}
-                    {cursorAtEnd && <SequenceItem onlyCursor forceIndex={cursorEndIndex} renderCursor={renderCursor} />}
+                    {data.isCursorAtEnd() && <SequenceItem onlyCursor forceIndex={data.bpCount()} renderCursor={renderCursor} />}
                     {/* <SequenceItem isEnd forceIndex={cursorEndIndex} /> */}
                 </div>
             </div>

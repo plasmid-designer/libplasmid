@@ -30,7 +30,9 @@ impl Default for RnaPartialCodon {
 impl RnaPartialCodon {
     pub fn push(&mut self, item: RnaNucleotide) -> anyhow::Result<()> {
         if self.nucleobase_count() == 3 {
-            return Err(anyhow!("Cannot push more than two bases into a partial codon"));
+            return Err(anyhow!(
+                "Cannot push more than two bases into a partial codon"
+            ));
         } else {
             self.bases.push(item);
             Ok(())

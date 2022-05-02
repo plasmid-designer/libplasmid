@@ -3,71 +3,107 @@
     windows_subsystem = "windows"
 )]
 
+use parking_lot::RwLock;
+
+mod state;
+use state::{SequenceState, CursorMovement};
+
+mod shared;
+use shared::{SequenceData, CursorData, SequenceItem};
+
 fn main() {
     tauri::Builder::default()
+        .manage(RwLock::new(SequenceState::default()))
         .invoke_handler(tauri::generate_handler![
             calculate_sequence_data,
-            sequence_to_triplet_chunks,
-            codon_to_peptide,
-            codon_to_complement
+            sequence_insert,
+            sequence_insert_all,
+            sequence_delete,
+            move_cursor,
+            move_cursor_left,
+            move_cursor_right,
+            move_cursor_to_start,
+            move_cursor_to_end,
+            move_cursor_to_codon_start,
+            move_cursor_to_codon_end,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-#[derive(serde::Serialize)]
-struct SequenceData {
-    codon: String,
-    anticodon: String,
-    peptide: String,
-    start_index: usize,
-    end_index: usize,
+#[tauri::command]
+fn sequence_insert(state: tauri::State<RwLock<SequenceState>>, letter: char) {
+    state.write().insert(letter)
 }
 
 #[tauri::command]
-fn calculate_sequence_data(sequence: Vec<String>) -> Vec<SequenceData> {
-    let mut data: Vec<SequenceData> = Vec::with_capacity(sequence.len() / 3);
-    for (index, triplet) in sequence_to_triplet_chunks(sequence).iter().enumerate() {
-        data.push(SequenceData {
-            codon: triplet.clone(),
-            anticodon: codon_to_complement(triplet.clone()),
-            peptide: codon_to_peptide(triplet.clone()),
+fn sequence_insert_all(state: tauri::State<RwLock<SequenceState>>, text: String) {
+    let text_without_whitespace = text.chars().filter(|c| !c.is_whitespace()).collect();
+    state.write().insert_all(text_without_whitespace)
+}
+
+#[tauri::command]
+fn sequence_delete(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().delete()
+}
+
+#[tauri::command]
+fn move_cursor(state: tauri::State<RwLock<SequenceState>>, index: usize) {
+    state.write().move_cursor(CursorMovement::To(index))
+}
+
+#[tauri::command]
+fn move_cursor_left(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::By(-1))
+}
+
+#[tauri::command]
+fn move_cursor_right(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::By(1))
+}
+
+#[tauri::command]
+fn move_cursor_to_start(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::Start)
+}
+
+#[tauri::command]
+fn move_cursor_to_end(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::End)
+}
+
+#[tauri::command]
+fn move_cursor_to_codon_start(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::CodonStart)
+}
+
+#[tauri::command]
+fn move_cursor_to_codon_end(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_cursor(CursorMovement::CodonEnd)
+}
+
+#[tauri::command]
+fn calculate_sequence_data(
+    state: tauri::State<RwLock<SequenceState>>
+) -> SequenceData {
+    let mut data: Vec<SequenceItem> = Vec::with_capacity(state.read().codons.len());
+    state.write().update();
+    let state = state.read();
+    for (index, codon) in state.codons.iter().enumerate() {
+        data.push(SequenceItem {
+            codon: codon.nucleotides.clone(),
+            anticodon: codon.anti_nucleotides.clone(),
+            peptide: codon.peptide,
             start_index: index * 3,
-            end_index: index * 3 + triplet.len(),
+            end_index: index * 3 + codon.nucleotides.len(),
         })
     }
-    data
-}
-
-#[tauri::command]
-fn sequence_to_triplet_chunks(sequence: Vec<String>) -> Vec<String> {
-    let mut chunks = Vec::new();
-    for chunk in sequence.chunks(3) {
-        chunks.push(chunk.join(""));
-    }
-    chunks
-}
-
-#[tauri::command]
-fn codon_to_peptide(codon: String) -> String {
-    use plasmid::prelude::*;
-    use plasmid::traits::{ToLetter, TryFromStr};
-    if let Ok(codon) = DnaCodon::try_from_str(&codon) {
-        codon.translate().to_letter().to_string()
-    } else {
-        String::new()
-    }
-}
-
-#[tauri::command]
-fn codon_to_complement(codon: String) -> String {
-    use plasmid::prelude::*;
-    use plasmid::traits::{ToLetter, TryFromLetter};
-    let mut buf = String::with_capacity(codon.len());
-    for nuc in codon.chars() {
-        if let Ok(nuc) = DnaNucleotide::try_from_letter(nuc) {
-            buf.push(nuc.complement().to_letter());
+    SequenceData {
+        sequence: data,
+        bp_count: state.sequence.len(),
+        cursor: CursorData {
+            position: state.cursor_pos,
+            is_at_end: state.cursor_pos == state.sequence.len(),
         }
     }
-    buf
 }
