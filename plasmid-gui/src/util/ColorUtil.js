@@ -1,4 +1,17 @@
+let lut = null
+
 class ColorUtil {
+    static getLut() {
+        if (lut === null) {
+            lut = {
+                nuc: [...'ATGC'].reduce((acc, c) => ({...acc, [c]: ColorUtil._innerGetNucleotideColorSlow(c)}), {}),
+                pep: [...'FYLIVHPMCSTDEKRQNAG*'].reduce((acc, c) => ({...acc, [c]: ColorUtil._innerGetPeptideColorSlow(c)}), {}),
+            }
+            console.log(`[ColorCache] Generated LUT:`)
+            console.dir(lut)
+        }
+        return lut
+    }
 
     /**
      * Get the nucleotide color as HSL
@@ -8,7 +21,11 @@ class ColorUtil {
      */
     static getNucleotideColor(nucleotide) {
         if (!nucleotide) return 'transparent'
-        switch (nucleotide.toUpperCase()) {
+        return ColorUtil.getLut().nuc[nucleotide] ?? ColorUtil._innerGetNucleotideColorSlow(nucleotide)
+    }
+
+    static _innerGetNucleotideColorSlow(nucleotide) {
+        switch (nucleotide) {
             case 'A': return 'hsl(0,75%,20%)';
             case 'T': return 'hsl(50,75%,20%)';
             case 'G': return 'hsl(100,75%,20%)';
@@ -25,7 +42,11 @@ class ColorUtil {
      */
     static getPeptideColor(peptide) {
         if (!peptide) return 'transparent'
-        switch (peptide.toUpperCase()) {
+        return ColorUtil.getLut().pep[peptide] ?? ColorUtil._innerGetPeptideColorSlow(peptide)
+    }
+
+    static _innerGetPeptideColorSlow(peptide) {
+        switch (peptide) {
             case 'F':
             case 'Y':
                 return 'hsl(260,33%,60%)'
