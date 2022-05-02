@@ -95,7 +95,6 @@ fn calculate_sequence_data(
             anticodon: codon.anti_nucleotides.clone(),
             peptide: codon.peptide,
             start_index: index * 3,
-            end_index: index * 3 + codon.nucleotides.len(),
         })
     }
     SequenceData {

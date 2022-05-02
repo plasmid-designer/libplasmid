@@ -28,7 +28,7 @@ const SequenceItem = ({
         isStart ? 'sequence__item--start-marker' : null,
         isEnd ? 'sequence__item--end-marker' : null,
     ]).join(' ')
-    const key = `${isStart ? 'start;' : ''}${isEnd ? 'end;' : ''}${codon}${codonIndex}`
+    const key = `${isStart ? 'start;' : ''}${isEnd ? 'end;' : ''}${codonIndex}`
     const index = forceIndex ?? (isStart ? 0 : codonIndex)
     return (
         <div data-index={index} className={className} key={key} data-selected={editorHints.highlightCurrentCodon ? selected : false}>
@@ -38,7 +38,7 @@ const SequenceItem = ({
                 {codon && codon.map((nucleotide, nucIndex) => (
                     <div
                         data-index={codonIndex + nucIndex}
-                        key={`codon;${codonIndex}${nucIndex}`}
+                        key={nucIndex}
                         className="sequence__item__codon__nucleotide_wrapper"
                     >
                         {cursorIndex === codonIndex + nucIndex && renderCursor && (
@@ -60,7 +60,7 @@ const SequenceItem = ({
                     {anticodon && anticodon.map((nucleotide, nucIndex) => (
                         <div
                             data-index={codonIndex + nucIndex}
-                            key={`anticodon;${codonIndex}${nucIndex}`}
+                            key={nucIndex}
                             className="sequence__item__codon__nucleotide_wrapper"
                         >
                             {cursorIndex === codonIndex + nucIndex && renderCursor && (
@@ -76,12 +76,12 @@ const SequenceItem = ({
                     )}
                 </div>
             )}
-            { editorHints.showCodonNumbers && (
+            { !onlyCursor && editorHints.showCodonNumbers && (
                 <div className="sequence__item__peptide_index">
-                    {codon && <>{codonIndex + 1}</>}
+                    {codon && codon.length > 0 && <>{codonIndex + 1}</>}
                 </div>
             )}
-            { editorHints.showPeptides && (
+            { !onlyCursor && editorHints.showPeptides && (
                 <div className="sequence__item__peptide">
                     {peptide && <span style={{backgroundColor: ColorUtil.getPeptideColor(peptide)}}>{peptide}</span>}
                 </div>
