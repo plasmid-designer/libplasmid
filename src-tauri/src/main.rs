@@ -6,10 +6,10 @@
 use parking_lot::RwLock;
 
 mod state;
-use state::{SequenceState, CursorMovement};
+use state::{CursorMovement, SequenceState};
 
 mod shared;
-use shared::{SequenceData, CursorData, SequenceItem};
+use shared::{CursorData, SequenceData, SequenceItem};
 
 fn main() {
     tauri::Builder::default()
@@ -83,9 +83,7 @@ fn move_cursor_to_codon_end(state: tauri::State<RwLock<SequenceState>>) {
 }
 
 #[tauri::command]
-fn calculate_sequence_data(
-    state: tauri::State<RwLock<SequenceState>>
-) -> SequenceData {
+fn calculate_sequence_data(state: tauri::State<RwLock<SequenceState>>) -> SequenceData {
     let mut data: Vec<SequenceItem> = Vec::with_capacity(state.read().codons.len());
     state.write().update();
     let state = state.read();
@@ -103,6 +101,6 @@ fn calculate_sequence_data(
         cursor: CursorData {
             position: state.cursor_pos,
             is_at_end: state.cursor_pos == state.sequence.len(),
-        }
+        },
     }
 }
