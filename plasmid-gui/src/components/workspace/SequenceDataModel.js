@@ -1,3 +1,65 @@
+export class SequenceDataSelectionModel {
+    constructor(data) {
+        this._data = data
+    }
+
+    /**
+     * @returns {number|null}
+     */
+    get start() {
+        return this._data?.start
+    }
+
+    /**
+     * @returns {number|null}
+     */
+    get end() {
+        return this._data?.end
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isActive() {
+        return this._data !== null && this._data !== undefined
+    }
+
+    contains(index) {
+        if (!this.isActive) return false
+        return index >= this.start && index < this.end
+    }
+}
+
+export class SequenceDataCursorModel {
+    constructor(data) {
+        this._data = data ?? { position: 0, isAtEnd: true }
+    }
+
+    /**
+     * @returns {number}
+     */
+     get cursorPosition() {
+        return this._data.position
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    isCursorAtEnd() {
+        return this._data.isAtEnd
+    }
+
+    /**
+     * @param {SequenceDataItemModel} item
+     * @returns {boolean}
+     */
+     isItemSelected(item) {
+        const cursorPos = this.cursorPosition
+        const startIndex = item.startIndex
+        return cursorPos >= startIndex && cursorPos < startIndex + item.codonLetters.length
+    }
+}
+
 export class SequenceDataItemModel {
     constructor(item) {
         this.data = item
@@ -6,87 +68,61 @@ export class SequenceDataItemModel {
     /**
      * @returns {string[]}
      */
-    codonLetters() {
+    get codonLetters() {
         return this.data.codon
     }
 
     /**
      * @returns {string[]}
      */
-    anticodonLetters() {
+    get anticodonLetters() {
         return this.data.anticodon
     }
 
     /**
      * @returns {string}
      */
-    peptideLetter() {
+    get peptideLetter() {
         return this.data.peptide ?? ''
     }
 
     /**
      * @returns {number}
      */
-    startIndex() {
+    get startIndex() {
         return this.data.start_index
     }
 }
 
 export default class SequenceDataModel {
     constructor(data) {
-        this._data = data ?? {
-            sequence: [],
-            bpCount: 0,
-            cursor: {
-                position: 0,
-                isAtEnd: true,
-            }
+        const patchedData = {
+            sequence: data?.sequence ?? [],
+            bpCount: data?.bpCount ?? 0,
         }
+        this._data = patchedData
         this._items = this._data.sequence.map(item => new SequenceDataItemModel(item))
+        this._selection = new SequenceDataSelectionModel(this._data.selection)
     }
 
     /**
      * @returns {number}
      */
-    bpCount() {
+    get bpCount() {
         return this._data.bpCount
-    }
-
-    /**
-     * @returns {number}
-     */
-    cursorPosition() {
-        return this._data.cursor.position
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    isCursorAtEnd() {
-        return this._data.cursor.isAtEnd
-    }
-
-    /**
-     * @param {SequenceDataItemModel} item
-     * @returns {boolean}
-     */
-    isItemSelected(item) {
-        const cursorPos = this.cursorPosition()
-        const startIndex = item.startIndex()
-        return cursorPos >= startIndex && cursorPos < startIndex + item.codonLetters().length
     }
 
     /**
      * @returns {SequenceDataItemModel[]}
      */
-    items() {
+    get items() {
         return this._items
     }
 
     /**
      * @returns {string[]}
      */
-    nucleotideSequence() {
-        return this.items().flatMap(item => item.codonLetters())
+    get nucleotideSequence() {
+        return this.items.flatMap(item => item.codonLetters)
     }
 }

@@ -17,7 +17,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showComplementStrand}
                         onChange={e => setEditorHints(hints => ({...hints, showComplementStrand: e.target.checked}))}
                     />
-                    <label htmlFor="show-complement">Show Antistrand</label>
+                    <label htmlFor="show-complement">Antistrand</label>
                 </div>
                 <div className="input_wrapper">
                     <input
@@ -26,7 +26,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showCodonNumbers}
                         onChange={e => setEditorHints(hints => ({...hints, showCodonNumbers: e.target.checked}))}
                     />
-                    <label htmlFor="show-codon-numbers">Show Codon Numbers</label>
+                    <label htmlFor="show-codon-numbers">Codon Indices</label>
                 </div>
                 <div className="input_wrapper">
                     <input
@@ -35,7 +35,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showPeptides}
                         onChange={e => setEditorHints(hints => ({...hints, showPeptides: e.target.checked}))}
                     />
-                    <label htmlFor="show-peptides">Show Peptides</label>
+                    <label htmlFor="show-peptides">Peptides</label>
                 </div>
                 <div className="input_wrapper">
                     <input

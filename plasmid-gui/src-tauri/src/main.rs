@@ -6,7 +6,7 @@
 use parking_lot::RwLock;
 
 mod state;
-use state::{CursorMovement, SequenceState};
+use state::{CursorMovement, SelectionMovement, SequenceState};
 
 mod shared;
 use shared::{CursorData, SequenceData, SequenceItem};
@@ -19,6 +19,7 @@ fn main() {
             sequence_insert,
             sequence_insert_all,
             sequence_delete,
+            sequence_delete_next,
             move_cursor,
             move_cursor_left,
             move_cursor_right,
@@ -26,6 +27,10 @@ fn main() {
             move_cursor_to_end,
             move_cursor_to_codon_start,
             move_cursor_to_codon_end,
+            set_selection,
+            reset_selection,
+            expand_selection_left,
+            expand_selection_right,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -45,6 +50,11 @@ fn sequence_insert_all(state: tauri::State<RwLock<SequenceState>>, text: String)
 #[tauri::command]
 fn sequence_delete(state: tauri::State<RwLock<SequenceState>>) {
     state.write().delete()
+}
+
+#[tauri::command]
+fn sequence_delete_next(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().delete_next()
 }
 
 #[tauri::command]
@@ -83,18 +93,45 @@ fn move_cursor_to_codon_end(state: tauri::State<RwLock<SequenceState>>) {
 }
 
 #[tauri::command]
+fn set_selection(state: tauri::State<RwLock<SequenceState>>, start: usize, end: usize) {
+    state.write().move_selection(SelectionMovement::Set { start, end })
+}
+
+#[tauri::command]
+fn reset_selection(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_selection(SelectionMovement::Reset)
+}
+
+#[tauri::command]
+fn expand_selection_left(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_selection(SelectionMovement::ExpandBy(-1))
+}
+
+#[tauri::command]
+fn expand_selection_right(state: tauri::State<RwLock<SequenceState>>) {
+    state.write().move_selection(SelectionMovement::ExpandBy(1))
+}
+
+#[tauri::command]
 fn calculate_sequence_data(state: tauri::State<RwLock<SequenceState>>) -> SequenceData {
-    let mut data: Vec<SequenceItem> = Vec::with_capacity(state.read().codons.len());
-    state.write().update();
+    let data = {
+        if state.read().sequence_dirty {
+            let mut data: Vec<SequenceItem> = Vec::with_capacity(state.read().codons.len());
+            state.write().update();
+            for (index, codon) in state.read().codons.iter().enumerate() {
+                data.push(SequenceItem {
+                    codon: codon.nucleotides.clone(),
+                    anticodon: codon.anti_nucleotides.clone(),
+                    peptide: codon.peptide,
+                    start_index: index * 3,
+                })
+            }
+            Some(data)
+        } else {
+            None
+        }
+    };
     let state = state.read();
-    for (index, codon) in state.codons.iter().enumerate() {
-        data.push(SequenceItem {
-            codon: codon.nucleotides.clone(),
-            anticodon: codon.anti_nucleotides.clone(),
-            peptide: codon.peptide,
-            start_index: index * 3,
-        })
-    }
     SequenceData {
         sequence: data,
         bp_count: state.sequence.len(),
@@ -102,5 +139,6 @@ fn calculate_sequence_data(state: tauri::State<RwLock<SequenceState>>) -> Sequen
             position: state.cursor_pos,
             is_at_end: state.cursor_pos == state.sequence.len(),
         },
+        selection: state.selection.as_ref().map(|selection| selection.into())
     }
 }

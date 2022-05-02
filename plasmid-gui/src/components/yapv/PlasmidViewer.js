@@ -31,6 +31,9 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
     }, [])
 
     const rerender = () => {
+        if (sequence.length === 0) {
+            return
+        }
         const markers = sequence.map((nucleotide, i) => {
             return {
                 displayConfig: {
@@ -113,12 +116,11 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
     useEffect(() => {
         if (
             ref.current === null
-            || sequence.length === 0
             || size.width === 0
             || size.height === 0
         ) return
         rerender()
-    }, [size, sequence.length])
+    }, [size, sequence, renderer])
 
     useEffect(() => {
         if (
