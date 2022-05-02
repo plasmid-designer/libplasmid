@@ -17,7 +17,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showComplementStrand}
                         onChange={e => setEditorHints(hints => ({...hints, showComplementStrand: e.target.checked}))}
                     />
-                    <label for="show-complement">Show Antistrand</label>
+                    <label htmlFor="show-complement">Show Antistrand</label>
                 </div>
                 <div className="input_wrapper">
                     <input
@@ -26,7 +26,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showCodonNumbers}
                         onChange={e => setEditorHints(hints => ({...hints, showCodonNumbers: e.target.checked}))}
                     />
-                    <label for="show-codon-numbers">Show Codon Numbers</label>
+                    <label htmlFor="show-codon-numbers">Show Codon Numbers</label>
                 </div>
                 <div className="input_wrapper">
                     <input
@@ -35,7 +35,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.showPeptides}
                         onChange={e => setEditorHints(hints => ({...hints, showPeptides: e.target.checked}))}
                     />
-                    <label for="show-peptides">Show Peptides</label>
+                    <label htmlFor="show-peptides">Show Peptides</label>
                 </div>
                 <div className="input_wrapper">
                     <input
@@ -44,7 +44,7 @@ const EditorToolbar = ({ className }) => {
                         checked={editorHints.highlightCurrentCodon}
                         onChange={e => setEditorHints(hints => ({...hints, highlightCurrentCodon: e.target.checked}))}
                     />
-                    <label for="highlight-active-codon">Highlight Active Codon</label>
+                    <label htmlFor="highlight-active-codon">Highlight Active Codon</label>
                 </div>
             </div>
             <div className="input_container" style={{flexGrow: 1}}></div>
