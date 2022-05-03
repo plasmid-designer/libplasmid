@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'modern-css-reset/dist/reset.min.css'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';

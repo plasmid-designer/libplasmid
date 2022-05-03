@@ -4,8 +4,6 @@ import { RecoilRoot } from 'recoil'
 import Header from './components/header/Header'
 import Workspace from './components/workspace/Workspace'
 
-import 'modern-css-reset/dist/reset.min.css'
-
 const App = ({ className }) => {
   return (
     <RecoilRoot>
