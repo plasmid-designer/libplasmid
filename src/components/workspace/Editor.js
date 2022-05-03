@@ -8,7 +8,8 @@ import EditorToolbar from './EditorToolbar'
 
 import ColorUtil from '../../util/ColorUtil'
 import { editorHintState } from '../../state/atoms'
-import { DynamicRenderer } from './renderers/DynamicRenderer'
+
+import CoreRendererV1 from './renderers/CoreRendererV1'
 
 const Editor = ({ className }) => {
     const editorRef = useRef()
@@ -50,7 +51,7 @@ const Editor = ({ className }) => {
                 onBlur={handleFocusChange(false)}
                 tabIndex={0}
             >
-                <DynamicRenderer sequence={sequence} cursor={cursor} selection={selection} showCursor={renderCursor} />
+                <CoreRendererV1 sequence={sequence} cursor={cursor} selection={selection} showCursor={renderCursor} />
             </div>
         </div>
     )

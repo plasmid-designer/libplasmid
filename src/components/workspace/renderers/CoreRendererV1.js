@@ -92,7 +92,7 @@ const SequenceItem = ({
     )
 }
 
-export const DynamicRenderer = ({
+const CoreRendererV1 = ({
     className,
     sequence,
     cursor,
@@ -116,3 +116,5 @@ export const DynamicRenderer = ({
         </div>
     )
 }
+
+export default CoreRendererV1
