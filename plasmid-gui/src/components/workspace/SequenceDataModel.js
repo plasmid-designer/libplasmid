@@ -32,7 +32,7 @@ export class SequenceDataSelectionModel {
 
 export class SequenceDataCursorModel {
     constructor(data) {
-        this._data = data ?? { position: 0, isAtEnd: true }
+        this._data = data ?? { position: 0, is_at_end: true }
     }
 
     /**
@@ -46,7 +46,7 @@ export class SequenceDataCursorModel {
      * @returns {boolean}
      */
     isCursorAtEnd() {
-        return this._data.isAtEnd
+        return this._data.is_at_end
     }
 
     /**
@@ -98,7 +98,7 @@ export default class SequenceDataModel {
     constructor(data) {
         const patchedData = {
             sequence: data?.sequence ?? [],
-            bpCount: data?.bpCount ?? 0,
+            bp_count: data?.bp_count ?? 0,
         }
         this._data = patchedData
         this._items = this._data.sequence.map(item => new SequenceDataItemModel(item))
@@ -109,7 +109,7 @@ export default class SequenceDataModel {
      * @returns {number}
      */
     get bpCount() {
-        return this._data.bpCount
+        return this._data.bp_count
     }
 
     /**
@@ -124,5 +124,12 @@ export default class SequenceDataModel {
      */
     get nucleotideSequence() {
         return this.items.flatMap(item => item.codonLetters)
+    }
+
+    /**
+     * @returns {string[]}
+     */
+     get antinucleotideSequence() {
+        return this.items.flatMap(item => item.anticodonLetters)
     }
 }
