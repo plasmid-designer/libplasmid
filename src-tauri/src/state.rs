@@ -139,8 +139,10 @@ impl SequenceState {
                     self.selection = None;
                 } else if end < start {
                     self.selection = Some(Selection { start: end, end: start });
+                    self.inner_move_cursor(CursorMovement::To(end));
                 } else {
                     self.selection = Some(Selection { start, end });
+                    self.inner_move_cursor(CursorMovement::To(end));
                 }
             }
             SelectionMovement::ExpandBy(distance) => {
