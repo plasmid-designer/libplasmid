@@ -162,7 +162,7 @@ impl SequenceState {
             }
             SelectionMovement::ExpandBy(distance) => {
                 let abs_distance = distance.abs() as usize;
-                match &mut self.selection {
+                match &self.selection {
                     Some(selection) => {
                         if distance.is_negative() {
                             let start = selection.start.saturating_sub(abs_distance);
