@@ -28,6 +28,11 @@ export class SequenceDataSelectionModel {
         if (!this.isActive) return false
         return index >= this.start && index < this.end
     }
+
+    partiallyContains(index, nucleotideCount) {
+        if (!this.isActive) return false
+        return index + nucleotideCount >= this.start && index < this.end
+    }
 }
 
 export class SequenceDataCursorModel {
