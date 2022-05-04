@@ -53,7 +53,10 @@ impl SequenceState {
                 if distance.is_negative() {
                     self.cursor_pos = self.cursor_pos.saturating_sub(distance.abs() as usize);
                 } else {
-                    self.cursor_pos = self.cursor_pos.saturating_add(distance as usize).min(self.sequence.len());
+                    self.cursor_pos = self
+                        .cursor_pos
+                        .saturating_add(distance as usize)
+                        .min(self.sequence.len());
                 }
             }
             CursorMovement::Start => {
@@ -103,6 +106,15 @@ impl SequenceState {
     }
 
     pub fn delete(&mut self) {
+        // If a selection is active, delete the selection range
+        if let Some(selection) = &self.selection {
+            self.sequence.drain(selection.start..selection.end);
+            self.cursor_pos = selection.start;
+            self.sequence_dirty = true;
+            self.inner_reset_selection();
+            return;
+        }
+
         match self.cursor_pos {
             0 => (),
             1 => _ = self.sequence.pop_front(),
@@ -138,29 +150,26 @@ impl SequenceState {
                 if end == start {
                     self.selection = None;
                 } else if end < start {
-                    self.selection = Some(Selection { start: end, end: start });
+                    self.selection = Some(Selection {
+                        start: end,
+                        end: start,
+                    });
                     self.inner_move_cursor(CursorMovement::To(end));
                 } else {
                     self.selection = Some(Selection { start, end });
                     self.inner_move_cursor(CursorMovement::To(end));
                 }
             }
-            SelectionMovement::ExpandBy(distance) => {
-                match &mut self.selection {
-                    Some(selection) => {
-                        if distance.is_negative() {
-                            selection.start = selection.start.saturating_sub(distance.abs() as usize);
-                        } else {
-                            selection.end = selection.end.saturating_add(distance as usize);
-                        }
-                    },
-                    None => {
-                        if distance.is_negative() && self.cursor_pos > 0 {
-
-                        }
+            SelectionMovement::ExpandBy(distance) => match &mut self.selection {
+                Some(selection) => {
+                    if distance.is_negative() {
+                        selection.start = selection.start.saturating_sub(distance.abs() as usize);
+                    } else {
+                        selection.end = selection.end.saturating_add(distance as usize);
                     }
                 }
-            }
+                None => if distance.is_negative() && self.cursor_pos > 0 {},
+            },
         }
     }
 
