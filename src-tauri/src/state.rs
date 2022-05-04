@@ -160,16 +160,51 @@ impl SequenceState {
                     self.inner_move_cursor(CursorMovement::To(end));
                 }
             }
-            SelectionMovement::ExpandBy(distance) => match &mut self.selection {
-                Some(selection) => {
-                    if distance.is_negative() {
-                        selection.start = selection.start.saturating_sub(distance.abs() as usize);
-                    } else {
-                        selection.end = selection.end.saturating_add(distance as usize);
+            SelectionMovement::ExpandBy(distance) => {
+                let abs_distance = distance.abs() as usize;
+                match &mut self.selection {
+                    Some(selection) => {
+                        if distance.is_negative() {
+                            let start = selection.start.saturating_sub(abs_distance);
+                            self.selection = Some(Selection {
+                                start,
+                                end: selection.end,
+                            });
+                            self.inner_move_cursor(CursorMovement::To(start));
+                        } else {
+                            let end = selection
+                                .end
+                                .saturating_add(abs_distance)
+                                .min(self.sequence.len());
+                            self.selection = Some(Selection {
+                                start: selection.start,
+                                end,
+                            });
+                            self.inner_move_cursor(CursorMovement::To(end));
+                        }
                     }
-                }
-                None => if distance.is_negative() && self.cursor_pos > 0 {},
-            },
+                    None => {
+                        if distance.is_negative() {
+                            let start = self.cursor_pos.saturating_sub(abs_distance);
+                            self.selection = Some(Selection {
+                                start,
+                                end: self.cursor_pos,
+                            });
+                            self.inner_move_cursor(CursorMovement::To(start));
+                        } else {
+                            let end = self
+                                .cursor_pos
+                                .saturating_add(abs_distance)
+                                .min(self.sequence.len());
+                            self.selection = Some(Selection {
+                                start: self.cursor_pos,
+                                end,
+                            });
+                            self.inner_move_cursor(CursorMovement::To(end));
+                        }
+                    }
+                };
+            }
         }
     }
 
