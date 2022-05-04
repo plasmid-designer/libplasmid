@@ -24,6 +24,7 @@ pub struct Selection {
     pub end: usize,
 }
 
+#[derive(Default)]
 pub struct SequenceState {
     pub sequence_dirty: bool,
     pub cursor_pos: usize,
@@ -147,18 +148,21 @@ impl SequenceState {
                 self.selection = None;
             }
             SelectionMovement::Set { start, end } => {
-                if end == start {
-                    self.selection = None;
-                } else if end < start {
-                    self.selection = Some(Selection {
-                        start: end,
-                        end: start,
-                    });
-                    self.inner_move_cursor(CursorMovement::To(end));
-                } else {
-                    self.selection = Some(Selection { start, end });
-                    self.inner_move_cursor(CursorMovement::To(end));
+                match start.cmp(&end) {
+                    std::cmp::Ordering::Less => {
+                        self.selection = Some(Selection { start, end });
+                    }
+                    std::cmp::Ordering::Equal => {
+                        self.inner_reset_selection();
+                    }
+                    std::cmp::Ordering::Greater => {
+                        self.selection = Some(Selection {
+                            start: end,
+                            end: start,
+                        });
+                    }
                 }
+                self.inner_move_cursor(CursorMovement::To(end));
             }
             SelectionMovement::ExpandBy(distance) => {
                 let abs_distance = distance.abs() as usize;
@@ -221,24 +225,12 @@ impl SequenceState {
                     chunk.clear();
                 }
             }
-            if chunk.len() > 0 {
+            if !chunk.is_empty() {
                 display_codons.push(DisplayCodon::new(&chunk));
             }
             display_codons
         };
         self.sequence_dirty = false;
-    }
-}
-
-impl Default for SequenceState {
-    fn default() -> Self {
-        Self {
-            sequence_dirty: false,
-            cursor_pos: 0,
-            sequence: VecDeque::new(),
-            codons: Vec::new(),
-            selection: None,
-        }
     }
 }
 
