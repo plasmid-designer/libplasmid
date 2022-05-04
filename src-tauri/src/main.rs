@@ -94,7 +94,9 @@ fn move_cursor_to_codon_end(state: tauri::State<RwLock<SequenceState>>) {
 
 #[tauri::command]
 fn set_selection(state: tauri::State<RwLock<SequenceState>>, start: usize, end: usize) {
-    state.write().move_selection(SelectionMovement::Set { start, end })
+    state
+        .write()
+        .move_selection(SelectionMovement::Set { start, end })
 }
 
 #[tauri::command]
@@ -104,7 +106,9 @@ fn reset_selection(state: tauri::State<RwLock<SequenceState>>) {
 
 #[tauri::command]
 fn expand_selection_left(state: tauri::State<RwLock<SequenceState>>) {
-    state.write().move_selection(SelectionMovement::ExpandBy(-1))
+    state
+        .write()
+        .move_selection(SelectionMovement::ExpandBy(-1))
 }
 
 #[tauri::command]
@@ -139,6 +143,6 @@ fn calculate_sequence_data(state: tauri::State<RwLock<SequenceState>>) -> Sequen
             position: state.cursor_pos,
             is_at_end: state.cursor_pos == state.sequence.len(),
         },
-        selection: state.selection.as_ref().map(|selection| selection.into())
+        selection: state.selection.as_ref().map(|selection| selection.into()),
     }
 }
