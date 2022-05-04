@@ -14,3 +14,8 @@ export const editorHintState = atom({
         highlightCurrentCodon: true,
     }
 })
+
+export const editorRendererState = atom({
+    key: 'editorRendererState',
+    default: 'core/v1'
+})

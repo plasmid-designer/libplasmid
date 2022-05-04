@@ -24,6 +24,22 @@ class ColorUtil {
         return ColorUtil.getLut().nuc[nucleotide] ?? ColorUtil._innerGetNucleotideColorSlow(nucleotide)
     }
 
+    /**
+     * @param {string[]} codonLetters
+     * @return {string[]}
+     */
+    static getCodonColors(codonLetters) {
+        return codonLetters.map(ColorUtil.getNucleotideColor)
+    }
+
+    /**
+     * @param {string[]} codonLetters
+     * @return {string[]}
+     */
+     static getSequenceColors(sequenceLetters) {
+        return sequenceLetters.map(ColorUtil.getNucleotideColor)
+    }
+
     static _innerGetNucleotideColorSlow(nucleotide) {
         switch (nucleotide) {
             case 'A': return 'hsl(0,75%,20%)';

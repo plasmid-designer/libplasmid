@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { invoke } from '@tauri-apps/api/tauri'
 import { useRecoilState } from 'recoil'
-import { defer } from 'lodash'
+import { defer, debounce } from 'lodash'
 
 import { sequenceState } from '../../state/atoms'
 
 import SequenceDataModel, { SequenceDataCursorModel, SequenceDataSelectionModel } from './SequenceDataModel'
+import useSelection from './useSelection'
 
 const Bridge = {
     calculateSequenceData: () => invoke('calculate_sequence_data'),
@@ -29,6 +30,15 @@ const Bridge = {
 const iupacChars = "ACGTWSMKRYBVDHN-"
 
 /**
+ * @param {HTMLElement} currentTarget
+ */
+ const findIndex = (currentTarget) => {
+    if (currentTarget.dataset.index) return parseInt(currentTarget.dataset.index)
+    if (currentTarget.parentElement.dataset.index) return parseInt(currentTarget.parentElement.dataset.index)
+    return null
+}
+
+/**
  * @returns {{
  *  cursor: import('./SequenceDataModel').SequenceDataCursorModel,
  *  sequence: import('./SequenceDataModel').default,
@@ -40,8 +50,16 @@ const useEditor = () => {
     const [cursorModel, setCursorModel] = useState(new SequenceDataCursorModel())
     const [selectionModel, setSelectionModel] = useState(new SequenceDataSelectionModel())
 
-    const [localSelection, setLocalSelection] = useState({ isSelecting: false, start: 0, end: 0 })
     const [, setSequence] = useRecoilState(sequenceState)
+
+    const {
+        isSelecting,
+        selection,
+        startSelection,
+        updateSelection,
+        endSelection,
+        resetSelection,
+    } = useSelection()
 
     useEffect(() => {
         updateSequence()
@@ -52,18 +70,18 @@ const useEditor = () => {
     }, [setSequence, sequenceModel])
 
     useEffect(() => {
-        const updateSelection = async () => {
-            if (localSelection.start === 0 && localSelection.end === 0) {
+        const updateBackendSelection = async () => {
+            if (selection.start === 0 && selection.end === 0) {
                 return
-            } else if (localSelection.start === localSelection.end) {
+            } else if (selection.start === selection.end) {
                 await Bridge.resetSelection()
             } else {
-                await Bridge.setSelection(localSelection.start, localSelection.end)
+                await Bridge.setSelection(selection.start, selection.end)
             }
             await updateSequence()
         }
-        updateSelection()
-    }, [localSelection])
+        updateBackendSelection()
+    }, [selection])
 
     /**
      * @param {KeyboardEvent} e
@@ -106,70 +124,37 @@ const useEditor = () => {
         return true
     }, [])
 
-    /**
-     * @param {MouseEvent} e
-     */
-    const handleMouseDown = useCallback(async e => {
+    const handleMouseEvent = useCallback(async e => {
         e.preventDefault()
-
-        const findIndex = (currentTarget, depth = 0) => {
-            if (depth === 3) return null
-            if (currentTarget.dataset.index) return parseInt(currentTarget.dataset.index)
-            return findIndex(currentTarget.parentElement, depth + 1)
-        }
+        e.stopPropagation()
 
         const index = findIndex(e.target)
 
-        if (index !== null) await Bridge.moveCursorTo(index)
-        else await Bridge.moveCursorToEnd()
-
-        setLocalSelection({ start: index, end: index, isSelecting: true })
-
-        return true
-    }, [])
-
-    const handleSelectionUpdate = useCallback(async (e, isEndMotion) => {
-        const findIndex = (currentTarget, depth = 0) => {
-            if (depth === 3) return null
-            if (currentTarget.dataset.index) return parseInt(currentTarget.dataset.index)
-            return findIndex(currentTarget.parentElement, depth + 1)
+        switch (e.type) {
+            case 'mousedown':
+                if (index !== null) {
+                    await Bridge.moveCursorTo(index)
+                    startSelection(index)
+                    console.log('MOUSE_DOWN')
+                } else {
+                    await Bridge.moveCursorToEnd()
+                }
+                return true
+            case 'mousemove':
+                if (isSelecting && index !== null) {
+                    updateSelection(index)
+                    console.log('MOUSE_MOVE')
+                }
+                return false
+            case 'mouseup':
+                endSelection(index ?? selection.end)
+                defer(() => {
+                    endSelection(index ?? selection.end)
+                })
+                console.log('MOUSE_UP')
+                return false
         }
-
-        const index = findIndex(e.target)
-
-        if (index !== null && localSelection.start !== index) {
-            setLocalSelection(({ start }) => ({ start, end: index, isSelecting: !isEndMotion }))
-        }
-    }, [localSelection])
-
-    /**
-     * @param {MouseEvent} e
-     */
-    const handleMouseMove = useCallback(async e => {
-        e.preventDefault()
-
-        if (localSelection.isSelecting) {
-            await handleSelectionUpdate(e, false)
-        }
-
-        return false
-    }, [handleSelectionUpdate, localSelection])
-
-    /**
-     * @param {MouseEvent} e
-     */
-    const handleMouseUp = useCallback(async e => {
-        e.preventDefault()
-
-        await handleSelectionUpdate(e, true)
-
-        setLocalSelection({ start: 0, end: 0, isSelecting: false })
-        defer(() => {
-            setLocalSelection({ start: 0, end: 0, isSelecting: false })
-        })
-
-        return false
-    }, [handleSelectionUpdate])
+    }, [isSelecting, startSelection, updateSelection, endSelection, selection])
 
     const updateSequence = async () => {
         const data = await Bridge.calculateSequenceData()
@@ -180,11 +165,11 @@ const useEditor = () => {
         setSelectionModel(new SequenceDataSelectionModel(data?.selection))
     }
 
-    const wrapUpdatingAsync = useCallback(fn => async (...data) => {
+    const wrapUpdatingAsync = fn => async (...data) => {
         if (await fn(...data)) {
             await updateSequence()
         }
-    }, [])
+    }
 
     return {
         cursor: cursorModel,
@@ -192,9 +177,7 @@ const useEditor = () => {
         selection: selectionModel,
         handlers: {
             handleKeyDown: wrapUpdatingAsync(handleKeyDown),
-            handleMouseDown: wrapUpdatingAsync(handleMouseDown),
-            handleMouseMove: wrapUpdatingAsync(handleMouseMove),
-            handleMouseUp: wrapUpdatingAsync(handleMouseUp),
+            handleMouseEvent: wrapUpdatingAsync(handleMouseEvent),
         }
     }
 }
