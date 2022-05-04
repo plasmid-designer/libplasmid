@@ -133,9 +133,8 @@ const useEditor = () => {
         switch (e.type) {
             case 'mousedown':
                 if (index !== null) {
-                    await Bridge.moveCursorTo(index)
                     startSelection(index)
-                    console.log('MOUSE_DOWN')
+                    await Bridge.moveCursorTo(index)
                 } else {
                     await Bridge.moveCursorToEnd()
                 }
@@ -143,7 +142,6 @@ const useEditor = () => {
             case 'mousemove':
                 if (isSelecting && index !== null) {
                     updateSelection(index)
-                    console.log('MOUSE_MOVE')
                 }
                 return false
             case 'mouseup':
@@ -151,7 +149,6 @@ const useEditor = () => {
                 defer(() => {
                     endSelection(index ?? selection.end)
                 })
-                console.log('MOUSE_UP')
                 return false
         }
     }, [isSelecting, startSelection, updateSelection, endSelection, selection])
