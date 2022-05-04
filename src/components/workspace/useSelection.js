@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { unstable_batchedUpdates, flushSync } from 'react-dom'
+import { debounce } from 'lodash'
 
 const useSelection = () => {
     const [isSelecting, setIsSelecting] = useState(false)
@@ -7,8 +8,8 @@ const useSelection = () => {
 
     const startSelection = useCallback((start) => {
         if (start === selection.start) return
-        flushSync(() => setIsSelecting(true))
-        setSelection({ start, end: 0 })
+        setIsSelecting(true)
+        setSelection({ start, end: start })
     }, [selection.start])
 
     const updateSelection = useCallback((end) => {
@@ -16,17 +17,21 @@ const useSelection = () => {
         setSelection({ start: selection.start, end })
     }, [selection, isSelecting])
 
+    const  debouncedUpdateSelection = debounce(updateSelection, 20, { maxWait: 200 })
+
     const endSelection = useCallback((end) => {
         if (!isSelecting) return
         setSelection({ start: selection.start, end })
-        flushSync(() => setIsSelecting(false))
+        setIsSelecting(false)
     }, [selection.start, isSelecting])
 
     const resetSelection = useMemo(() => () => {
-        flushSync(() => setIsSelecting(false))
+        setIsSelecting(false)
     }, [])
 
-    console.log(`Selecting: ${isSelecting}; Start: ${selection.start}; End: ${selection.end}`)
+    // useEffect(() => {
+    //     console.log(`Selecting: ${isSelecting}; Start: ${selection.start}; End: ${selection.end}`)
+    // }, [isSelecting, selection])
 
     return {
         isSelecting,
