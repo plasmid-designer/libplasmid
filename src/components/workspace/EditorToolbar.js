@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
 
-import { editorHintState } from '../../state/atoms'
+import { editorHintState, editorRendererState } from '../../state/atoms'
 
 const EditorToolbar = ({ className }) => {
     const [editorHints, setEditorHints] = useRecoilState(editorHintState)
+    const [renderer, setRenderer] = useRecoilState(editorRendererState)
 
     return (
         <div className={className}>
@@ -48,6 +49,14 @@ const EditorToolbar = ({ className }) => {
                 </div>
             </div>
             <div className="input_container" style={{flexGrow: 1}}></div>
+            <div className="input_container">
+                <div className="input_wrapper">
+                    <select id="renderer-input" value={renderer} onChange={e => setRenderer(e.target.value)} placeholder="Renderer">
+                        <option value="core/v1">Core Renderer v1</option>
+                        <option value="next">Next (Experimental)</option>
+                    </select>
+                </div>
+            </div>
         </div>
     )
 }
@@ -92,6 +101,10 @@ export default styled(EditorToolbar)`
             &:last-child {
                 margin-right: .5rem;
             }
+        }
+
+        input[list] {
+            margin-left: .25rem;
         }
     }
 `

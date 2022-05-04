@@ -1,4 +1,4 @@
-import { memo, useRef, useEffect, useState } from 'react'
+import { memo, useMemo, useRef, useEffect, useCallback, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { compact } from 'lodash'
 import styled from 'styled-components'
@@ -7,13 +7,15 @@ import useEditor from './useEditor'
 import EditorToolbar from './EditorToolbar'
 
 import ColorUtil from '../../util/ColorUtil'
-import { editorHintState } from '../../state/atoms'
+import { editorHintState, editorRendererState } from '../../state/atoms'
 
 import CoreRendererV1 from './renderers/CoreRendererV1'
+import NextRenderer from './renderers/NextRenderer'
 
 const Editor = ({ className }) => {
     const editorRef = useRef()
     const [renderCursor, setRenderCursor] = useState(false)
+    const rendererName = useRecoilValue(editorRendererState)
 
     const {
         cursor,
@@ -21,9 +23,7 @@ const Editor = ({ className }) => {
         selection,
         handlers: {
             handleKeyDown,
-            handleMouseDown,
-            handleMouseMove,
-            handleMouseUp,
+            handleMouseEvent,
         },
     } = useEditor()
 
@@ -31,10 +31,18 @@ const Editor = ({ className }) => {
         editorRef.current?.focus()
     }, [])
 
-    const handleFocusChange = (showCursor, refocus = false) => () => {
+    const handleFocusChange = useCallback((showCursor, refocus = false) => () => {
         setRenderCursor(showCursor)
         if (refocus) { editorRef.current?.focus() }
-    }
+    }, [])
+
+    const RendererComponent = useMemo(() => {
+        switch (rendererName) {
+            case 'core/v1': return CoreRendererV1
+            case 'next': return NextRenderer
+            default: return CoreRendererV1
+        }
+    }, [rendererName])
 
     return (
         <div className={className}>
@@ -43,15 +51,15 @@ const Editor = ({ className }) => {
                 ref={editorRef}
                 className="editor"
                 onKeyDown={handleKeyDown}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
+                onMouseDown={handleMouseEvent}
+                onMouseMove={handleMouseEvent}
+                onMouseUp={handleMouseEvent}
                 onFocus={handleFocusChange(true)}
                 onClick={handleFocusChange(true, true)}
                 onBlur={handleFocusChange(false)}
                 tabIndex={0}
             >
-                <CoreRendererV1 sequence={sequence} cursor={cursor} selection={selection} showCursor={renderCursor} />
+                <RendererComponent sequence={sequence} cursor={cursor} selection={selection} showCursor={renderCursor} />
             </div>
         </div>
     )
