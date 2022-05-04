@@ -128,7 +128,9 @@ const CodonIndex = memo(
  * opacity: number,
  * }} props
  */
-const _Codon = ({ className, index, cursor, selection, letters, colors }) => {
+const _Codon = props => {
+    const { className, index, cursor, selection, letters, colors } = props
+    // console.log(`[${index}] ${letters}`, structuredClone(props))
     return (
         <div className={className} data-index={index}>
             {letters.map((letter, nucIndex) => (
@@ -155,7 +157,31 @@ const Codon = memo(
         display: flex;
         flex-flow: row;
         opacity: ${props => props.opacity};
-    `
+    `,
+    (lastProps, nextProps) => {
+        // Diff cursor rendering
+        const lastCodonDidRenderCursor = lastProps.cursor.cursorPosition >= lastProps.index && lastProps.cursor.cursorPosition < lastProps.index + lastProps.letters.length
+        const codonShouldRenderCursor = nextProps.cursor.cursorPosition >= nextProps.index && nextProps.cursor.cursorPosition < nextProps.index + nextProps.letters.length
+        const renderCursorChanged = lastCodonDidRenderCursor != codonShouldRenderCursor
+
+        // Diff cursor position
+        const cursorPositionChanged = !renderCursorChanged && codonShouldRenderCursor && lastProps.cursor.cursorPosition != nextProps.cursor.cursorPosition
+
+        // Diff selection rendering
+        const lastSelectionDidContainIndex = lastProps.selection.partiallyContains(lastProps.index, lastProps.letters.length)
+        const selectionShouldContainIndex = nextProps.selection.partiallyContains(nextProps.index, nextProps.letters.length)
+        const selectionChanged = lastSelectionDidContainIndex != selectionShouldContainIndex
+
+        const propsAreEqual = (
+            lastProps.index === nextProps.index
+            && lastProps.letters === nextProps.letters
+            && !renderCursorChanged
+            && !selectionChanged
+            && !cursorPositionChanged
+        )
+
+        return propsAreEqual
+    }
 )
 
 /**
