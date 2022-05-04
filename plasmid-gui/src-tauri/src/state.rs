@@ -53,7 +53,7 @@ impl SequenceState {
                 if distance.is_negative() {
                     self.cursor_pos = self.cursor_pos.saturating_sub(distance.abs() as usize);
                 } else {
-                    self.cursor_pos = self.cursor_pos.saturating_add(distance as usize);
+                    self.cursor_pos = self.cursor_pos.saturating_add(distance as usize).min(self.sequence.len());
                 }
             }
             CursorMovement::Start => {
@@ -177,7 +177,9 @@ impl SequenceState {
                     chunk.clear();
                 }
             }
-            display_codons.push(DisplayCodon::new(&chunk));
+            if chunk.len() > 0 {
+                display_codons.push(DisplayCodon::new(&chunk));
+            }
             display_codons
         };
         self.sequence_dirty = false;
