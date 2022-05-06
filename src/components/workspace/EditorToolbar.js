@@ -52,8 +52,8 @@ const EditorToolbar = ({ className }) => {
             <div className="input_container">
                 <div className="input_wrapper">
                     <select id="renderer-input" value={renderer} onChange={e => setRenderer(e.target.value)} placeholder="Renderer">
-                        <option value="core/v1">Core Renderer v1</option>
-                        <option value="next">Next (Experimental)</option>
+                        <option value="legacy">Legacy Renderer</option>
+                        <option value="next">Next Renderer (Default)</option>
                     </select>
                 </div>
             </div>
