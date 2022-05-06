@@ -1,15 +1,13 @@
-import { memo, useMemo, useRef, useEffect, useCallback, useState } from 'react'
+import { useMemo, useRef, useEffect, useCallback, useState } from 'react'
 import { useRecoilValue } from 'recoil'
-import { compact } from 'lodash'
 import styled from 'styled-components'
 
 import useEditor from './useEditor'
 import EditorToolbar from './EditorToolbar'
 
-import ColorUtil from '../../util/ColorUtil'
-import { editorHintState, editorRendererState } from '../../state/atoms'
+import { editorRendererState } from '../../state/atoms'
 
-import CoreRendererV1 from './renderers/CoreRendererV1'
+import LegacyRenderer from './renderers/LegacyRenderer'
 import NextRenderer from './renderers/NextRenderer'
 
 const Editor = ({ className }) => {
@@ -38,9 +36,9 @@ const Editor = ({ className }) => {
 
     const RendererComponent = useMemo(() => {
         switch (rendererName) {
-            case 'core/v1': return CoreRendererV1
+            case 'legacy': return LegacyRenderer
             case 'next': return NextRenderer
-            default: return CoreRendererV1
+            default: return NextRenderer
         }
     }, [rendererName])
 

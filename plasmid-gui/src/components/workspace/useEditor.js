@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { invoke } from '@tauri-apps/api/tauri'
 import { useRecoilState } from 'recoil'
-import { defer, debounce } from 'lodash'
 
 import { sequenceState } from '../../state/atoms'
 
@@ -60,7 +59,6 @@ const useEditor = () => {
         startSelection,
         updateSelection,
         endSelection,
-        resetSelection,
     } = useSelection()
 
     useEffect(() => {
@@ -155,9 +153,8 @@ const useEditor = () => {
                 return false
             case 'mouseup':
                 endSelection(index ?? selection.end)
-                defer(() => {
-                    endSelection(index ?? selection.end)
-                })
+                return false
+            default:
                 return false
         }
     }, [isSelecting, startSelection, updateSelection, endSelection, selection])

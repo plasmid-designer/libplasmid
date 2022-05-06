@@ -1,4 +1,3 @@
-import { useRef, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { compact } from 'lodash'
 import styled from 'styled-components'
@@ -81,7 +80,7 @@ const SequenceItem = ({
             )}
             { !onlyCursor && editorHints.showCodonNumbers && (
                 <div className="sequence__item__peptide_index">
-                    {item.codonLetters && item.codonLetters.length > 0 && <>{item.startIndex + 1}</>}
+                    {item.codonLetters && item.codonLetters.length > 0 && <>{Math.floor(item.startIndex / 3)}</>}
                 </div>
             )}
             { !onlyCursor && editorHints.showPeptides && (
@@ -93,7 +92,7 @@ const SequenceItem = ({
     )
 }
 
-const CoreRendererV1 = ({
+const LegacyRenderer = ({
     className,
     sequence,
     cursor,
@@ -118,7 +117,7 @@ const CoreRendererV1 = ({
     )
 }
 
-export default styled(CoreRendererV1)`
+export default styled(LegacyRenderer)`
     display: flex;
     flex-flow: row wrap;
     font-family: monospace;
