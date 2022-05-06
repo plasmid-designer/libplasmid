@@ -305,15 +305,6 @@ const NextRenderer = ({
                     selection={selection}
                 />
             ))}
-            {/* {sequence.items.map(item => (
-                <SequenceItem
-                    item={item}
-                    selection={selection}
-                    cursorIndex={cursor.cursorPosition}
-                    renderCursor={showCursor}
-                    selected={showCursor && cursor.isItemSelected(item)}
-                />
-            ))} */}
         </div>
     )
 }
