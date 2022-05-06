@@ -28,9 +28,11 @@ fn main() {
             move_cursor_to_codon_start,
             move_cursor_to_codon_end,
             set_selection,
+            set_selection_all,
             reset_selection,
             expand_selection_left,
             expand_selection_right,
+            get_selected_sequence,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -100,6 +102,13 @@ fn set_selection(state: tauri::State<RwLock<SequenceState>>, start: usize, end: 
 }
 
 #[tauri::command]
+fn set_selection_all(state: tauri::State<RwLock<SequenceState>>) {
+    state
+        .write()
+        .move_selection(SelectionMovement::All)
+}
+
+#[tauri::command]
 fn reset_selection(state: tauri::State<RwLock<SequenceState>>) {
     state.write().move_selection(SelectionMovement::Reset)
 }
@@ -114,6 +123,11 @@ fn expand_selection_left(state: tauri::State<RwLock<SequenceState>>) {
 #[tauri::command]
 fn expand_selection_right(state: tauri::State<RwLock<SequenceState>>) {
     state.write().move_selection(SelectionMovement::ExpandBy(1))
+}
+
+#[tauri::command]
+fn get_selected_sequence(state: tauri::State<RwLock<SequenceState>>) -> String {
+    state.read().get_selected_sequence()
 }
 
 #[tauri::command]
