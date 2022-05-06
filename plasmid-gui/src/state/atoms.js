@@ -17,5 +17,5 @@ export const editorHintState = atom({
 
 export const editorRendererState = atom({
     key: 'editorRendererState',
-    default: 'core/v1'
+    default: 'next'
 })
