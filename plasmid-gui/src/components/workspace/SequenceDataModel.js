@@ -1,27 +1,19 @@
+class Range {
+    constructor(start, end) {
+        this.start = start
+        this.end = end
+        this.length = end - start
+    }
+}
+
 export class SequenceDataSelectionModel {
     constructor(data) {
         this._data = data
-    }
 
-    /**
-     * @returns {number|null}
-     */
-    get start() {
-        return this._data?.start
-    }
-
-    /**
-     * @returns {number|null}
-     */
-    get end() {
-        return this._data?.end
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isActive() {
-        return this._data !== null && this._data !== undefined
+        this.start = this._data?.start
+        this.end = this._data?.end
+        this.length = Math.max(0, this.end ?? 0 - this.start ?? 0)
+        this.isActive = data !== undefined && data !== null
     }
 
     contains(index) {
@@ -29,22 +21,24 @@ export class SequenceDataSelectionModel {
         return index >= this.start && index < this.end
     }
 
-    partiallyContains(index, nucleotideCount) {
-        if (!this.isActive) return false
-        return index + nucleotideCount >= this.start && index < this.end
+    overlapCount(index, nucleotideCount) {
+        if (!this.isActive) return 0
+        if (this.start > index + nucleotideCount) return 0
+        const selectionRange = new Range(this.start, this.end)
+        const codonRange = new Range(index, index + nucleotideCount)
+        const minRange = selectionRange.start < codonRange.start ? selectionRange : codonRange
+        const maxRange = minRange === selectionRange ? codonRange : selectionRange
+        if (minRange.end < maxRange.start) return 0
+        const overlapRange = new Range(maxRange.start, minRange.end < maxRange.end ? minRange.end : maxRange.end)
+        return overlapRange.length
     }
 }
 
 export class SequenceDataCursorModel {
     constructor(data) {
         this._data = data ?? { position: 0, is_at_end: true }
-    }
 
-    /**
-     * @returns {number}
-     */
-     get cursorPosition() {
-        return this._data.position
+        this.cursorPosition = this._data.position
     }
 
     /**

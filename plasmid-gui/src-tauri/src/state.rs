@@ -17,6 +17,7 @@ pub enum SelectionMovement {
     Set { start: usize, end: usize },
     ExpandBy(isize),
     Reset,
+    All,
 }
 
 pub struct Selection {
@@ -194,6 +195,11 @@ impl SequenceState {
                 }
                 self.inner_move_cursor(CursorMovement::To(end));
             }
+            SelectionMovement::All => {
+                self.selection = Some(
+                    Selection { start: 0, end: self.sequence.len() }
+                )
+            }
             SelectionMovement::ExpandBy(distance) => {
                 let abs_distance = distance.abs() as usize;
                 match &self.selection {
@@ -278,6 +284,15 @@ impl SequenceState {
             display_codons
         };
         self.sequence_dirty = false;
+    }
+
+    pub fn get_selected_sequence(&self) -> String {
+        use plasmid::traits::ToLetter;
+
+        match &self.selection {
+            Some(selection) => self.sequence.range(selection.start..selection.end).map(|nuc| nuc.to_letter()).collect(),
+            None => String::default()
+        }
     }
 }
 

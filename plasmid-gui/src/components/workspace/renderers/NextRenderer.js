@@ -80,6 +80,7 @@ const Peptide = memo(
         align-items: center;
         font-size: 10pt;
         padding: .1rem;
+        z-index: 1;
 
         & > span {
             display: flex;
@@ -159,28 +160,34 @@ const Codon = memo(
         opacity: ${props => props.opacity};
     `,
     (lastProps, nextProps) => {
+        // Short circuit if the index or content changed
+        if (
+            lastProps.index !== nextProps.index ||
+            lastProps.letters !== nextProps.letters
+        ) return false
+
         // Diff cursor rendering
-        const lastCodonDidRenderCursor = lastProps.cursor.cursorPosition >= lastProps.index && lastProps.cursor.cursorPosition < lastProps.index + lastProps.letters.length
-        const codonShouldRenderCursor = nextProps.cursor.cursorPosition >= nextProps.index && nextProps.cursor.cursorPosition < nextProps.index + nextProps.letters.length
-        const renderCursorChanged = lastCodonDidRenderCursor != codonShouldRenderCursor
+        const shouldRenderCursor = ({cursor, index, letters}) => (
+            cursor.cursorPosition >= index &&
+            cursor.cursorPosition < index + letters.length
+        )
+        const nextShouldRenderCursor = shouldRenderCursor(nextProps)
+        const renderCursorChanged = shouldRenderCursor(lastProps) !== nextShouldRenderCursor
+        if (renderCursorChanged) return false
 
         // Diff cursor position
-        const cursorPositionChanged = !renderCursorChanged && codonShouldRenderCursor && lastProps.cursor.cursorPosition != nextProps.cursor.cursorPosition
-
-        // Diff selection rendering
-        const lastSelectionDidContainIndex = lastProps.selection.partiallyContains(lastProps.index, lastProps.letters.length)
-        const selectionShouldContainIndex = nextProps.selection.partiallyContains(nextProps.index, nextProps.letters.length)
-        const selectionChanged = lastSelectionDidContainIndex != selectionShouldContainIndex
-
-        const propsAreEqual = (
-            lastProps.index === nextProps.index
-            && lastProps.letters === nextProps.letters
-            && !renderCursorChanged
-            && !selectionChanged
-            && !cursorPositionChanged
+        const cursorPositionChanged = (
+            !renderCursorChanged &&
+            nextShouldRenderCursor &&
+            lastProps.cursor.cursorPosition !== nextProps.cursor.cursorPosition
         )
+        if (cursorPositionChanged) return false
 
-        return propsAreEqual
+        // Diff selection overlap count
+        const overlapCount = ({selection, index, letters}) => selection.overlapCount(index, letters.length)
+        if (overlapCount(lastProps) !== overlapCount(nextProps)) return false
+
+        return true
     }
 )
 
@@ -193,6 +200,8 @@ const Codon = memo(
  * }} props
  */
 const _SequenceItem = ({ className, item, cursor, selection }) => {
+    const editorHints = useRecoilValue(editorHintState)
+
     const codonColors = useMemo(
         () => ColorUtil.getCodonColors(item.codonLetters),
         [item.codonLetters]
@@ -205,10 +214,13 @@ const _SequenceItem = ({ className, item, cursor, selection }) => {
         () => ColorUtil.getPeptideColor(item.peptideLetter),
         [item.peptideLetter]
     )
-    const editorHints = useRecoilValue(editorHintState)
+    const highlightCodon = useMemo(
+        () => editorHints.highlightCurrentCodon && cursor.isItemSelected(item),
+        [editorHints.highlightCurrentCodon, cursor, item]
+    )
 
     return (
-        <div className={className} data-index={item.startIndex}>
+        <div className={className} data-index={item.startIndex} data-highlighted={highlightCodon}>
             <Codon
                 index={item.startIndex}
                 selection={selection}
@@ -248,6 +260,22 @@ const SequenceItem = memo(
     styled(_SequenceItem)`
         display: flex;
         flex-flow: column;
+        border-radius: .25rem;
+        position: relative;
+
+        &[data-highlighted=true]:before {
+            content: " ";
+            position: absolute;
+            top: 0;
+            right: 1px;
+            bottom: 2px;
+            left: 1px;
+            border: 1px solid hsla(0,0%,50%,.33);
+            border-radius: .25rem;
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+        }
     `
 )
 

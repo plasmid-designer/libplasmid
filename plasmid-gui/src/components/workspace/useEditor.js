@@ -22,9 +22,11 @@ const Bridge = {
     moveCursorToStart: () => invoke('move_cursor_to_start'),
     moveCursorToEnd: () => invoke('move_cursor_to_end'),
     setSelection: (start, end) => invoke('set_selection', { start, end }),
+    selectAll: () => invoke('set_selection_all'),
     resetSelection: () => invoke('reset_selection'),
     expandSelectionLeft: () => invoke('expand_selection_left'),
     expandSelectionRight: () => invoke('expand_selection_right'),
+    getSelectedSequence: () => invoke('get_selected_sequence'),
 }
 
 const iupacChars = "ACGTWSMKRYBVDHN-"
@@ -88,6 +90,7 @@ const useEditor = () => {
      */
     const handleKeyDown = useCallback(async e => {
         e.preventDefault()
+        e.stopPropagation()
 
         const upperKey = e.key.toUpperCase()
         const ctrl = e.ctrlKey
@@ -111,10 +114,16 @@ const useEditor = () => {
                 else await Bridge.moveCursorRight()
                 break
             default:
-                if (ctrl && upperKey === 'V') {
+                if (ctrl && upperKey === 'C') {
+                    await navigator.clipboard.writeText(await Bridge.getSelectedSequence())
+                    return true
+                } else if (ctrl && upperKey === 'V') {
                     const text = await navigator.clipboard.readText()
                     await Bridge.insertAll(text)
-                    return
+                    return true
+                } else if (ctrl && upperKey === 'A') {
+                    await Bridge.selectAll()
+                    return true
                 }
                 if (iupacChars.includes(upperKey)) {
                     await Bridge.insert(upperKey)
