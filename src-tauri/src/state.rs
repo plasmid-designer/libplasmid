@@ -138,7 +138,10 @@ impl SequenceState {
     }
 
     pub fn delete(&mut self) {
-        self.inner_delete_selection_content();
+        if self.selection.is_some() {
+            self.inner_delete_selection_content();
+            return
+        }
 
         match self.cursor_pos {
             0 => (),
