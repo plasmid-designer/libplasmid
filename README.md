@@ -1,6 +1,6 @@
 ![Plasmid Logo](./logo_header.svg)
 
-Plasmid is a genetics / bioinformatics library.<br>
+Plasmid is a genetics / bioinformatics framework.<br>
 
 It consists of three parts:
 - `libplasmid`: Library for genetic code creation, editing and analysis
@@ -11,7 +11,49 @@ This is a work-in-progress.
 
 I should also mention that I'm not at all trained in bioinformatics, biochemistry, genetics or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
 
-## Modules
+## GUI
+
+I will try to provide automated builds and releases as soon as possible.
+
+![Plasmid Desktop Screenshot](./gui.png)
+
+## CLI
+
+### Pretty print DNA sequence
+
+```sh
+# Command
+plasmid-cli pp "ATGTACCCGTATCTG"
+
+# Output
+# 5' ATGTACCCGTATCTG 3'
+# 3' TACATGGGCATAGAC 5'
+#     M  Y  P  Y  L
+```
+
+### Match DNA sequence with IUPAC pattern
+
+```sh
+# Command
+plasmid-cli match "ATGTACCCGTATCTG" "ATGNNNSSSW"
+
+# Output
+# 5' ATGTACCCGTATCTG 3'
+#    ATGNNNSSSW   
+# -> Matches: true
+```
+
+### Export circular DNA as SVG
+
+```sh
+plasmid-cli export "ATGTACCCGTATCTG" --format svg
+```
+
+![DNA sequence ATGTACCCGTATCTG as SVG](./example.svg)
+
+## libPlasmid
+
+### Modules
 
 | Module   | Description |
 | -------- | ----------- |
@@ -26,7 +68,7 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
 | `exp`    | Export Helpers |
 | `traits` | Helpful Traits |
 
-## Scope
+### Scope
 
 - genetic sequence modeling
   - [x] dna/rna nucleotides
@@ -71,7 +113,7 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
     - [x] circular
   - [ ] custom?
 
-### Examples
+#### Examples
 
 ```rs
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -94,7 +136,3 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   println!("{}", svg.export()); // print svg code
 }
 ```
-
-### GUI
-
-![Plasmid Desktop Screenshot](./gui.png)
