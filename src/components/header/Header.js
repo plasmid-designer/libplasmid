@@ -22,6 +22,7 @@ export default styled(Header)`
     align-items: center;
     padding: 1rem 2rem;
     background: hsl(0,0%,10%);
+    user-select: none;
 
     & img {
         object-fit: scale-down;

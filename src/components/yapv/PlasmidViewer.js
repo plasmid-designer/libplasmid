@@ -51,7 +51,15 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
                 },
             }
         })
-        const interval = sequence.length < 100 ? 10 : sequence.length < 500 ? 25 : sequence.length < 1000 ? 50 : sequence.length < 2000 ? 100 : sequence.length < 5000 ? 200 : 500;
+        const interval =
+            sequence.length < 3 ? 1 :
+            sequence.length < 10 ? 2 :
+            sequence.length < 50 ? 2 :
+            sequence.length < 100 ? 10 :
+            sequence.length < 500 ? 25 :
+            sequence.length < 1000 ? 50 :
+            sequence.length < 2000 ? 100 :
+            sequence.length < 5000 ? 200 : 500;
         renderer?.draw({
             sequenceConfig: {
                 length: sequence.length,
