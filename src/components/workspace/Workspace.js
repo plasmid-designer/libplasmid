@@ -7,8 +7,8 @@ import Editor from './Editor'
 const Workspace = ({className}) => {
     const resizePanelOptions = {
         left: {
-            minWidth: 500,
-            startRatio: 0.75,
+            minWidth: 250,
+            startRatio: 0.6,
         }
     }
 
