@@ -103,9 +103,7 @@ fn set_selection(state: tauri::State<RwLock<SequenceState>>, start: usize, end: 
 
 #[tauri::command]
 fn set_selection_all(state: tauri::State<RwLock<SequenceState>>) {
-    state
-        .write()
-        .move_selection(SelectionMovement::All)
+    state.write().move_selection(SelectionMovement::All)
 }
 
 #[tauri::command]
@@ -131,9 +129,12 @@ fn get_selected_sequence(state: tauri::State<RwLock<SequenceState>>) -> String {
 }
 
 #[tauri::command]
-fn calculate_sequence_data(state: tauri::State<RwLock<SequenceState>>) -> SequenceData {
+fn calculate_sequence_data(
+    state: tauri::State<RwLock<SequenceState>>,
+    force: bool,
+) -> SequenceData {
     let data = {
-        if state.read().sequence_dirty {
+        if force || state.read().sequence_dirty {
             let mut data: Vec<SequenceItem> = Vec::with_capacity(state.read().codons.len());
             state.write().update();
             for (index, codon) in state.read().codons.iter().enumerate() {

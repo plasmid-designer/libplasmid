@@ -140,7 +140,7 @@ impl SequenceState {
     pub fn delete(&mut self) {
         if self.selection.is_some() {
             self.inner_delete_selection_content();
-            return
+            return;
         }
 
         match self.cursor_pos {
@@ -199,9 +199,10 @@ impl SequenceState {
                 self.inner_move_cursor(CursorMovement::To(end));
             }
             SelectionMovement::All => {
-                self.selection = Some(
-                    Selection { start: 0, end: self.sequence.len() }
-                )
+                self.selection = Some(Selection {
+                    start: 0,
+                    end: self.sequence.len(),
+                })
             }
             SelectionMovement::ExpandBy(distance) => {
                 let abs_distance = distance.abs() as usize;
@@ -293,8 +294,12 @@ impl SequenceState {
         use plasmid::traits::ToLetter;
 
         match &self.selection {
-            Some(selection) => self.sequence.range(selection.start..selection.end).map(|nuc| nuc.to_letter()).collect(),
-            None => String::default()
+            Some(selection) => self
+                .sequence
+                .range(selection.start..selection.end)
+                .map(|nuc| nuc.to_letter())
+                .collect(),
+            None => String::default(),
         }
     }
 }
