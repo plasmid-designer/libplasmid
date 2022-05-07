@@ -1,13 +1,24 @@
 import styled from 'styled-components'
+import ResizableSplitPanel from '../ResizableSplitPanel'
 import PlasmidViewer from '../yapv/PlasmidViewer'
 
 import Editor from './Editor'
 
 const Workspace = ({className}) => {
+    const resizePanelOptions = {
+        left: {
+            minWidth: 500,
+            startRatio: 0.75,
+        }
+    }
+
     return (
         <div className={className}>
-            <Editor />
-            <PlasmidViewer />
+            <ResizableSplitPanel
+                leftComponent={<Editor />}
+                rightComponent={<PlasmidViewer />}
+                options={resizePanelOptions}
+            />
         </div>
     )
 }
@@ -15,9 +26,6 @@ const Workspace = ({className}) => {
 export default styled(Workspace)`
     display: flex;
     height: 100%;
+    width: 100%;
     overflow: hidden;
-
-    & >:first-child {
-        border-right: 2px solid hsl(0,0%,20%);
-    }
 `
