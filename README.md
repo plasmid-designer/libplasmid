@@ -49,7 +49,7 @@ plasmid-cli match "ATGTACCCGTATCTG" "ATGNNNSSSW"
 plasmid-cli export "ATGTACCCGTATCTG" --format svg
 ```
 
-![DNA sequence ATGTACCCGTATCTG as SVG](./example.svg)
+![DNA sequence ATGTACCCGTATCTG as SVG](./example_svg_export.png)
 
 ## libPlasmid
 
