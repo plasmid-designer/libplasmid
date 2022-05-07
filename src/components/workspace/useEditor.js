@@ -8,7 +8,7 @@ import SequenceDataModel, { SequenceDataCursorModel, SequenceDataSelectionModel 
 import useSelection from './useSelection'
 
 const Bridge = {
-    calculateSequenceData: () => invoke('calculate_sequence_data'),
+    calculateSequenceData: force => invoke('calculate_sequence_data', { force }),
     insert: letter => invoke('sequence_insert', { letter }),
     insertAll: text => invoke('sequence_insert_all', { text }),
     delete: () => invoke('sequence_delete'),
@@ -62,7 +62,7 @@ const useEditor = () => {
     } = useSelection()
 
     useEffect(() => {
-        updateSequence()
+        updateSequence(true)
     }, [])
 
     useEffect(() => {
@@ -159,8 +159,8 @@ const useEditor = () => {
         }
     }, [isSelecting, startSelection, updateSelection, endSelection, selection])
 
-    const updateSequence = async () => {
-        const data = await Bridge.calculateSequenceData()
+    const updateSequence = async (force = false) => {
+        const data = await Bridge.calculateSequenceData(force)
         if (data.sequence) {
             setSequenceModel(new SequenceDataModel(data))
         }
