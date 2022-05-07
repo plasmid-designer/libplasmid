@@ -46,10 +46,8 @@ plasmid-cli match "ATGTACCCGTATCTG" "ATGNNNSSSW"
 ### Export circular DNA as SVG
 
 ```sh
-plasmid-cli export "ATGTACCCGTATCTG" --format svg
+plasmid-cli export "ATGTACCCGTATCTG" --format svg > out.svg
 ```
-
-![DNA sequence ATGTACCCGTATCTG as SVG](./example_svg_export.png)
 
 ## libPlasmid
 
