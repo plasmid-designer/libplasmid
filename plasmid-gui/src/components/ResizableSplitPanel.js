@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const getPanelWidth = (panelOptions, fullWidth, calculatedWidth) => {
     return (
-        calculatedWidth
+        Math.min(calculatedWidth, fullWidth)
         ?? panelOptions?.startWidth
         ?? (
             ('startRatio' in panelOptions)
@@ -43,6 +43,8 @@ const ResizableSplitPanel = ({ className, leftComponent, rightComponent, options
         if (!isInitialized && width !== 0) {
             setLeftPanelWidth(getPanelWidth(options?.left, width, null))
             markAsInitialized()
+        } else if (!isResizing) {
+            setLeftPanelWidth(getPanelWidth(options?.left, width - options?.left?.minWidth ?? 0, leftPanelWidth))
         }
     }, [width])
 
