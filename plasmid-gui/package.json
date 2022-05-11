@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.2.1",
     "@yapv/core": "^0.2.2",
     "@yapv/svg": "^0.2.2",
+    "allotment": "^1.13.0",
     "lodash": "^4.17.21",
     "modern-css-reset": "^1.4.0",
     "open-vector-editor": "^17.4.6",

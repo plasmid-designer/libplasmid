@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import YAPV from '@yapv/core'
 import SVG from '@yapv/svg'
@@ -23,18 +23,8 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
     const [renderer, setRenderer] = useState(null)
     const [parentRef, size] = useElementSize()
 
-    useEffect(() => {
-        if (ref.current === null) return
-        const renderer = YAPV.create(ref.current)
-        renderer.use(SVG.circular)
-        setRenderer(renderer)
-    }, [])
-
-    const rerender = () => {
-        if (sequence.length === 0) {
-            return
-        }
-        const markers = sequence.map((nucleotide, i) => {
+    const markers = useMemo(() => {
+        return (sequence ?? []).map((nucleotide, i) => {
             return {
                 displayConfig: {
                     width: 10,
@@ -51,6 +41,9 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
                 },
             }
         })
+    }, [sequence])
+
+    const sequenceConfig = useMemo(() => {
         const interval =
             sequence.length < 3 ? 1 :
             sequence.length < 10 ? 2 :
@@ -59,18 +52,18 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
             sequence.length < 500 ? 25 :
             sequence.length < 1000 ? 50 :
             sequence.length < 2000 ? 100 :
-            sequence.length < 5000 ? 200 : 500;
-        renderer?.draw({
+            sequence.length < 5000 ? 200 : 500
+        return {
             sequenceConfig: {
                 length: sequence.length,
             },
             displayConfig: {
                 width: size.width,
-                height: size.height,
-                viewBox: {
-                    width: size.width,
-                    height: size.height,
-                },
+                height: size.width,
+                // viewBox: {
+                //     width: size.width,
+                //     height: size.width,
+                // },
             },
             labels: [
                 {
@@ -99,12 +92,12 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
                     },
                     axes: [{
                         displayConfig: {
-                          distance: 20,
+                          distance: 5,
                           width: 5,
                           style: 'fill: black;',
                           scales: [{
-                            width: 20,
-                            distance: 10,
+                            width: 10,
+                            distance: 5,
                             interval,
                             style: 'stroke: black; stroke-width: 2;',
                             label: {
@@ -118,7 +111,21 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
                     markers,
                 },
             ],
-        })
+        }
+    }, [sequence, markers, size?.width])
+
+    useEffect(() => {
+        if (ref.current === null) return
+        const renderer = YAPV.create(ref.current)
+        renderer.use(SVG.circular)
+        setRenderer(renderer)
+    }, [])
+
+    const rerender = () => {
+        if (sequence.length === 0) {
+            return
+        }
+        renderer?.draw(sequenceConfig)
     }
 
     useEffect(() => {
@@ -144,22 +151,37 @@ const PlasmidViewer = ({ className, name = "Foo" }) => {
 
     return (
         <div ref={parentRef} className={className}>
-            <div className="inner" ref={ref} />
+            {sequence.length > 0 && (
+                <div className="inner" ref={ref} />
+            )}
         </div>
     )
 }
 
 export default styled(PlasmidViewer)`
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    min-width: 350px;
-    min-height: 350px;
-    width: 30vw;
-    height: 30vw;
+    width: 100%;
+    height: 100%;
 
     & .inner {
         width: 100%;
         height: 100%;
+    }
+
+    & .inner > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 100%;
+        height: 100%;
+
+        & > svg {
+            width: 100%;
+            height: auto;
+        }
     }
 `

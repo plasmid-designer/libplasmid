@@ -122,6 +122,9 @@ const useEditor = () => {
                 } else if (ctrl && upperKey === 'A') {
                     await Bridge.selectAll()
                     return true
+                } else if (ctrl && upperKey === 'X') {
+                    await navigator.clipboard.writeText(await Bridge.getSelectedSequence())
+                    await Bridge.delete()
                 }
                 if (iupacChars.includes(upperKey)) {
                     await Bridge.insert(upperKey)

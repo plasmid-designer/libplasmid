@@ -1,24 +1,24 @@
 import styled from 'styled-components'
+import { Allotment, setSashSize } from 'allotment'
+
 import ResizableSplitPanel from '../ResizableSplitPanel'
 import PlasmidViewer from '../yapv/PlasmidViewer'
 
 import Editor from './Editor'
 
-const Workspace = ({className}) => {
-    const resizePanelOptions = {
-        left: {
-            minWidth: 250,
-            startRatio: 0.6,
-        }
-    }
+setSashSize(20)
 
+const Workspace = ({className}) => {
     return (
         <div className={className}>
-            <ResizableSplitPanel
-                leftComponent={<Editor />}
-                rightComponent={<PlasmidViewer />}
-                options={resizePanelOptions}
-            />
+            <Allotment proportionalLayout vertical={false}>
+                <Allotment.Pane minSize={300}>
+                    <Editor />
+                </Allotment.Pane>
+                <Allotment.Pane snap preferredSize={350} maxSize={500}>
+                    <PlasmidViewer />
+                </Allotment.Pane>
+            </Allotment>
         </div>
     )
 }
@@ -28,4 +28,8 @@ export default styled(Workspace)`
     height: 100%;
     width: 100%;
     overflow: hidden;
+
+    & > * {
+        width: 100%;
+    }
 `
