@@ -2,7 +2,7 @@ import { atom } from 'recoil'
 
 export const sequenceState = atom({
     key: 'sequenceState',
-    default: '',
+    default: [],
 })
 
 export const editorHintState = atom({
