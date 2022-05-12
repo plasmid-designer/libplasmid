@@ -15,6 +15,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v3
+    - run: cd plasmid-gui
     - name: Setup node
       uses: actions/setup-node@v3
       with:
