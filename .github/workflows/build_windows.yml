@@ -15,6 +15,11 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Install Tauri
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: tauri-cli --version 1.0.0-rc.10
       - name: Create build directory
         run: mkdir ./plasmid-gui/build
       - name: Build
