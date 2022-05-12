@@ -2,10 +2,9 @@
 
 Plasmid is a genetics / bioinformatics framework.<br>
 
-It consists of three parts:
+It consists of two parts:
 - `libplasmid`: Library for genetic code creation, editing and analysis
 - `plasmid-cli`: CLI for genetic sequence processing
-- `plasmid-gui`: Desktop GUI using Tauri
 
 This is a work-in-progress.
 
@@ -13,9 +12,7 @@ I should also mention that I'm not at all trained in bioinformatics, biochemistr
 
 ## GUI
 
-I will try to provide automated builds and releases as soon as possible.
-
-![Plasmid Desktop Screenshot](./gui.png)
+The desktop application has moved to [Plasmid Designer](https://github.com/plasmid-designer/plasmid-designer).
 
 ## CLI
 
