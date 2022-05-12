@@ -3,5 +3,4 @@
 members = [
     "libplasmid",
     "plasmid-cli",
-    "plasmid-gui/src-tauri"
 ]
