@@ -1,4 +1,5 @@
 ![Plasmid Logo](./logo_header.svg)
+> This is now the backbone for [Plasmid Designer]
 
 Plasmid is a genetics / bioinformatics framework.<br>
 
@@ -8,11 +9,11 @@ It consists of two parts:
 
 This is a work-in-progress.
 
-I should also mention that I'm not at all trained in bioinformatics, biochemistry, genetics or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
+I should also mention that I'm not at all trained in bioinformatics, bioengineering, or anything even remotely similar. I'm writing this library while I'm learning the concepts, so expect some rough edges.
 
 ## GUI
 
-The desktop application has moved to [Plasmid Designer](https://github.com/plasmid-designer/plasmid-designer).
+The desktop application has moved to [Plasmid Designer].
 
 ## CLI
 
@@ -131,3 +132,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   println!("{}", svg.export()); // print svg code
 }
 ```
+
+[Plasmid Designer]: https://github.com/plasmid-designer/plasmid-designer
